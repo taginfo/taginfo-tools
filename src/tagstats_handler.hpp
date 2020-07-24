@@ -22,15 +22,12 @@
 
 */
 
-#include <cassert>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <string>
-#include <unordered_map>
-#include <utility>
+#include "geodistribution.hpp"
+#include "hash.hpp"
+#include "statistics_handler.hpp"
+#include "string_store.hpp"
 
-#include <google/sparse_hash_map>
+#include <sqlite.hpp>
 
 #include <osmium/handler.hpp>
 #include <osmium/index/map/dense_mem_array.hpp>
@@ -40,11 +37,15 @@
 #include <osmium/util/memory.hpp>
 #include <osmium/util/verbose_output.hpp>
 
-#include "geodistribution.hpp"
-#include "hash.hpp"
-#include "sqlite.hpp"
-#include "statistics_handler.hpp"
-#include "string_store.hpp"
+#include <google/sparse_hash_map>
+
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <string>
+#include <unordered_map>
+#include <utility>
 
 /**
  * Stores the location of nodes. Lookup is by node ID.

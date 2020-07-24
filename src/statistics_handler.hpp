@@ -22,12 +22,12 @@
 
 */
 
-#include <cstdint>
+#include <sqlite.hpp>
 
 #include <osmium/handler.hpp>
 #include <osmium/osm.hpp>
 
-#include "sqlite.hpp"
+#include <cstdint>
 
 /**
  * Osmium handler that collects basic statistics from OSM data and

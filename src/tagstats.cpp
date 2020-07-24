@@ -19,6 +19,10 @@
 
 */
 
+#include "geodistribution.hpp"
+#include "statistics_handler.hpp"
+#include "tagstats_handler.hpp"
+
 #include <getopt.h>
 
 #include <osmium/io/any_input.hpp>
@@ -26,15 +30,9 @@
 #include <osmium/util/verbose_output.hpp>
 #include <osmium/visitor.hpp>
 
-#include "statistics_handler.hpp"
-
-#include "geodistribution.hpp"
-
 GeoDistribution::geo_distribution_type GeoDistribution::c_distribution_all;
 int GeoDistribution::c_width;
 int GeoDistribution::c_height;
-
-#include "tagstats_handler.hpp"
 
 void print_help() {
     std::cout << "tagstats [OPTIONS] OSMFILE DATABASE\n\n" \

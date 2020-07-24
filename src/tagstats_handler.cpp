@@ -19,6 +19,17 @@
 
 */
 
+#include "geodistribution.hpp"
+#include "hash.hpp"
+#include "string_store.hpp"
+#include "tagstats_handler.hpp"
+
+#include <sqlite.hpp>
+
+#include <osmium/osm.hpp>
+#include <osmium/util/memory.hpp>
+#include <osmium/util/verbose_output.hpp>
+
 #include <cassert>
 #include <cstring>
 #include <iomanip>
@@ -26,16 +37,6 @@
 #include <map>
 #include <string>
 #include <utility>
-
-#include <osmium/osm.hpp>
-#include <osmium/util/memory.hpp>
-#include <osmium/util/verbose_output.hpp>
-
-#include "geodistribution.hpp"
-#include "hash.hpp"
-#include "sqlite.hpp"
-#include "string_store.hpp"
-#include "tagstats_handler.hpp"
 
 struct split_result {
     const char* k;

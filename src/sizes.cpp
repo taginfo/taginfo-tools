@@ -19,9 +19,9 @@
 
 */
 
-#include <iostream>
-
 #include "tagstats_handler.hpp"
+
+#include <iostream>
 
 int main() {
     std::cout << "sizeof(Counter).................................= " << sizeof(Counter) << "\n";

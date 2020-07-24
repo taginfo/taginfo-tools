@@ -22,16 +22,16 @@
 
 */
 
+#include <osmium/osm/location.hpp>
+#include <osmium/osm/types.hpp>
+
+#include <gd.h>
+
 #include <cassert>
 #include <limits>
 #include <memory>
 #include <stdexcept>
 #include <vector>
-
-#include <gd.h>
-
-#include <osmium/osm/location.hpp>
-#include <osmium/osm/types.hpp>
 
 /**
  * Functor class defining the call operator as a function that limits a

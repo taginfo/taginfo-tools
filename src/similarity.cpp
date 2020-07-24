@@ -19,6 +19,8 @@
 
 */
 
+#include <sqlite.hpp>
+
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
@@ -29,8 +31,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
-
-#include "sqlite.hpp"
 
 const int MIN_STRLEN = 4;
 const int MAX_STRLEN = 120;

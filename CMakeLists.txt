@@ -26,10 +26,11 @@ find_package(Osmium 2.14.2 REQUIRED COMPONENTS io)
 find_library(GD_LIBRARY NAMES gd)
 find_library(SQLITE_LIBRARY NAMES sqlite3)
 
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/include)
+include_directories(SYSTEM ${OSMIUM_INCLUDE_DIRS} ${ICU_INCLUDE_DIR})
+
 
 #-----------------------------------------------------------------------------
-
-include_directories(SYSTEM ${OSMIUM_INCLUDE_DIRS} ${ICU_INCLUDE_DIR})
 
 add_subdirectory(src)
 

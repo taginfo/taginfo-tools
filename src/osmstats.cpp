@@ -19,13 +19,13 @@
 
 */
 
-#include <iostream>
+#include "statistics_handler.hpp"
 
 #include <osmium/handler.hpp>
 #include <osmium/io/any_input.hpp>
 #include <osmium/visitor.hpp>
 
-#include "statistics_handler.hpp"
+#include <iostream>
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {

@@ -19,6 +19,12 @@
 
 */
 
+#include <sqlite.hpp>
+
+#include <unicode/schriter.h>
+#include <unicode/uchar.h>
+#include <unicode/unistr.h>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -28,12 +34,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <vector>
-
-#include <unicode/schriter.h>
-#include <unicode/uchar.h>
-#include <unicode/unistr.h>
-
-#include "sqlite.hpp"
 
 const char* category_to_string(int8_t category) noexcept {
     switch (category) {
