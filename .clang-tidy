@@ -1,0 +1,13 @@
+---
+Checks: '*,-fuchsia-*'
+#
+#  For a list of check options, see:
+#  https://clang.llvm.org/extra/clang-tidy/checks/list.html
+#
+#  Disabled checks:
+#
+#  fuchsia-*
+#    Much too strict.
+#
+#WarningsAsErrors: '*'
+...

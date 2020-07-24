@@ -31,6 +31,31 @@ include_directories(SYSTEM ${OSMIUM_INCLUDE_DIRS} ${ICU_INCLUDE_DIR})
 
 
 #-----------------------------------------------------------------------------
+#
+#  Optional "clang-tidy" target
+#
+#-----------------------------------------------------------------------------
+message(STATUS "Looking for clang-tidy")
+find_program(CLANG_TIDY NAMES clang-tidy-10 clang-tidy-9 clang-tidy-8)
+
+if(CLANG_TIDY)
+    message(STATUS "Looking for clang-tidy - found ${CLANG_TIDY}")
+
+    file(GLOB _srcs RELATIVE "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/src/*.cpp")
+
+    add_custom_target(clang-tidy
+        ${CLANG_TIDY}
+        -p ${CMAKE_BINARY_DIR}
+        ${_srcs}
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/src"
+    )
+else()
+    message(STATUS "Looking for clang-tidy - not found")
+    message(STATUS "  Build target 'clang-tidy' will not be available.")
+endif()
+
+
+#-----------------------------------------------------------------------------
 
 add_subdirectory(src)
 
