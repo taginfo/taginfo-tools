@@ -120,9 +120,9 @@ uint64_t show_location_index_memory_usage(osmium::util::VerboseOutput& out, cons
 }
 
 void TagStatsHandler::timer_info(const char* msg) {
-    const auto duration = time(0) - m_timer;
+    const auto duration = time(nullptr) - m_timer;
     m_vout << "  " << msg << " took " << duration << " seconds (about " << duration / 60 << " minutes)\n";
-    m_timer = time(0);
+    m_timer = time(nullptr);
 }
 
 void TagStatsHandler::update_key_combination_hash(osmium::item_type type,
@@ -335,7 +335,7 @@ TagStatsHandler::TagStatsHandler(Sqlite::Database& database,
     Handler(),
     m_vout(vout),
     m_min_tag_combination_count(min_tag_combination_count),
-    m_timer(time(0)),
+    m_timer(time(nullptr)),
     m_tags_stat(),
     m_key_value_stats(),
     m_key_value_geodistribution(),
@@ -386,7 +386,7 @@ TagStatsHandler::TagStatsHandler(Sqlite::Database& database,
 
     m_vout << "------------------------------------------------------------------------------\n";
     m_vout << "Processing nodes...\n";
-    m_timer = time(0);
+    m_timer = time(nullptr);
 }
 
 void TagStatsHandler::node(const osmium::Node& node) {

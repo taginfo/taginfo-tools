@@ -56,18 +56,18 @@ void print_help() {
 
 int main(int argc, char* argv[]) {
     static struct option long_options[] = {
-        {"help",                      no_argument,       0, 'H'},
-        {"index",                     required_argument, 0, 'i'},
-        {"show-index-types",          no_argument,       0, 'I'},
-        {"min-tag-combination-count", required_argument, 0, 'm'},
-        {"selection-db",              required_argument, 0, 's'},
-        {"top",                       required_argument, 0, 't'},
-        {"right",                     required_argument, 0, 'r'},
-        {"bottom",                    required_argument, 0, 'b'},
-        {"left",                      required_argument, 0, 'l'},
-        {"width",                     required_argument, 0, 'w'},
-        {"height",                    required_argument, 0, 'h'},
-        {0, 0, 0, 0}
+        {"help",                      no_argument,       nullptr, 'H'},
+        {"index",                     required_argument, nullptr, 'i'},
+        {"show-index-types",          no_argument,       nullptr, 'I'},
+        {"min-tag-combination-count", required_argument, nullptr, 'm'},
+        {"selection-db",              required_argument, nullptr, 's'},
+        {"top",                       required_argument, nullptr, 't'},
+        {"right",                     required_argument, nullptr, 'r'},
+        {"bottom",                    required_argument, nullptr, 'b'},
+        {"left",                      required_argument, nullptr, 'l'},
+        {"width",                     required_argument, nullptr, 'w'},
+        {"height",                    required_argument, nullptr, 'h'},
+        {nullptr, 0, nullptr, 0}
     };
 
     unsigned int min_tag_combination_count = 1000;
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
     unsigned int height = 180;
 
     while (true) {
-        int c = getopt_long(argc, argv, "Hi:Im:s:t:r:b:l:w:h:", long_options, 0);
+        int c = getopt_long(argc, argv, "Hi:Im:s:t:r:b:l:w:h:", long_options, nullptr);
         if (c == -1) {
             break;
         }

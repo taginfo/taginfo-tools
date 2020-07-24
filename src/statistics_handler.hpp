@@ -80,7 +80,7 @@ public:
             "sum_way_version",
             "sum_relation_version",
             "max_changeset_id",
-            0    // last element (sentinel) must always be 0
+            nullptr    // last element (sentinel) must always be nullptr
         };
         m_stat_names = sn;
 
