@@ -24,16 +24,16 @@
 #include <iostream>
 
 int main() {
-    std::cout << "sizeof(Counter).................................= " << sizeof(Counter) << "\n";
-    std::cout << "sizeof(GeoDistribution)........................ = " << sizeof(GeoDistribution) << "\n";
-    std::cout << "sizeof(KeyStats)............................... = " << sizeof(KeyStats) << "\n";
-    std::cout << "sizeof(KeyValueStats).......................... = " << sizeof(KeyValueStats) << "\n";
-    std::cout << "sizeof(StringStore)............................ = " << sizeof(StringStore) << "\n";
-    std::cout << "sizeof(key_hash_map_type)...................... = " << sizeof(key_hash_map_type) << "\n";
-    std::cout << "sizeof(value_hash_map_type).................... = " << sizeof(value_hash_map_type) << "\n";
-    std::cout << "sizeof(key_value_hash_map_type)................ = " << sizeof(key_value_hash_map_type) << "\n";
-    std::cout << "sizeof(key_combination_hash_map_type).......... = " << sizeof(combination_hash_map_type) << "\n";
-    std::cout << "sizeof(key_value_geodistribution_hash_map_type) = " << sizeof(key_value_geodistribution_hash_map_type) << "\n";
-    std::cout << "sizeof(user_hash_map_type)..................... = " << sizeof(user_hash_map_type) << "\n";
+    std::cout << "sizeof(Counter)................................ = " << sizeof(Counter) << '\n';
+    std::cout << "sizeof(GeoDistribution)........................ = " << sizeof(GeoDistribution) << '\n';
+    std::cout << "sizeof(KeyStats)............................... = " << sizeof(KeyStats) << '\n';
+    std::cout << "sizeof(KeyValueStats).......................... = " << sizeof(KeyValueStats) << '\n';
+    std::cout << "sizeof(StringStore)............................ = " << sizeof(StringStore) << '\n';
+    std::cout << "sizeof(key_hash_map_type)...................... = " << sizeof(key_hash_map_type) << '\n';
+    std::cout << "sizeof(value_hash_map_type).................... = " << sizeof(value_hash_map_type) << '\n';
+    std::cout << "sizeof(key_value_hash_map_type)................ = " << sizeof(key_value_hash_map_type) << '\n';
+    std::cout << "sizeof(key_combination_hash_map_type).......... = " << sizeof(combination_hash_map_type) << '\n';
+    std::cout << "sizeof(key_value_geodistribution_hash_map_type) = " << sizeof(key_value_geodistribution_hash_map_type) << '\n';
+    std::cout << "sizeof(user_hash_map_type)..................... = " << sizeof(user_hash_map_type) << '\n';
 }
 

@@ -75,9 +75,9 @@ public:
 
     LocationIndex(const std::string& index_type_name, bool better_resolution) {
         if (better_resolution) {
-            m_location_index_32bit = std::move(create_map<uint32_t>(index_type_name));
+            m_location_index_32bit = create_map<uint32_t>(index_type_name);
         } else {
-            m_location_index_16bit = std::move(create_map<uint16_t>(index_type_name));
+            m_location_index_16bit = create_map<uint16_t>(index_type_name);
         }
     }
 
@@ -295,7 +295,7 @@ class TagStatsHandler : public osmium::handler::Handler {
 
     std::map<std::string, RelationTypeStats> m_relation_type_stats;
 
-    time_t m_max_timestamp;
+    time_t m_max_timestamp = 0;
 
     // this must be much bigger than the largest string we want to store
     static const int string_store_size = 1024 * 1024 * 10;
@@ -309,7 +309,7 @@ class TagStatsHandler : public osmium::handler::Handler {
 
     LocationIndex& m_location_index;
 
-    osmium::item_type m_last_type;
+    osmium::item_type m_last_type = osmium::item_type::node;
 
     void timer_info(const char* msg);
 

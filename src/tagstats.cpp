@@ -34,7 +34,7 @@ GeoDistribution::geo_distribution_type GeoDistribution::c_distribution_all;
 int GeoDistribution::c_width;
 int GeoDistribution::c_height;
 
-void print_help() {
+static void print_help() {
     std::cout << "tagstats [OPTIONS] OSMFILE DATABASE\n\n" \
               << "This program is part of taginfo. It calculates statistics on OSM tags\n" \
               << "from OSMFILE and puts them into DATABASE (an SQLite database).\n" \
@@ -143,11 +143,11 @@ int main(int argc, char* argv[]) {
 
     GeoDistribution::set_dimensions(width, height);
     osmium::io::File input_file{argv[optind]};
-    Sqlite::Database db{argv[optind+1], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE};
+    Sqlite::Database db{argv[optind+1], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
 
     MapToInt map_to_int{left, bottom, right, top, width, height};
 
-    const bool better_resolution = (width * height) >= (1 << 16);
+    const bool better_resolution = (width * height) >= (1U << 16U);
     LocationIndex location_index{index_type_name, better_resolution};
     TagStatsHandler handler{db, selection_database_name, map_to_int, min_tag_combination_count, vout, location_index};
 

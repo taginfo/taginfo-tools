@@ -45,14 +45,14 @@ struct split_result {
     size_t vsize;
 };
 
-split_result split_key_value(const char* kv) noexcept {
+static split_result split_key_value(const char* kv) noexcept {
     const char* v = std::strchr(kv, '=');
 
     if (v) {
         return split_result{kv, size_t(v - kv), v + 1, std::strlen(v+1)};
-    } else {
-        return split_result{kv, std::strlen(kv), "", 0};
     }
+
+    return split_result{kv, std::strlen(kv), "", 0};
 }
 
 template <typename T>
@@ -102,7 +102,7 @@ uint64_t show_sparsehash_map_memory_usage(osmium::util::VerboseOutput& out, uint
     return size_values;
 }
 
-uint64_t show_string_store_memory_usage(osmium::util::VerboseOutput& out, const StringStore& string_store) {
+static uint64_t show_string_store_memory_usage(osmium::util::VerboseOutput& out, const StringStore& string_store) {
     const auto chunk_size = string_store.get_chunk_size() / 1024;
     const auto chunk_count = string_store.get_chunk_count();
     out << std::setw(8) << (chunk_size * chunk_count) << " kB ["
@@ -112,7 +112,7 @@ uint64_t show_string_store_memory_usage(osmium::util::VerboseOutput& out, const 
     return string_store.get_chunk_size() * chunk_count;
 }
 
-uint64_t show_location_index_memory_usage(osmium::util::VerboseOutput& out, const LocationIndex& location_index) {
+static uint64_t show_location_index_memory_usage(osmium::util::VerboseOutput& out, const LocationIndex& location_index) {
     out << std::setw(8) << (location_index.used_memory() / 1024) << " kB ["
         << "size=" << location_index.size()
         << "]\n";
@@ -213,12 +213,12 @@ void TagStatsHandler::print_and_clear_key_distribution_images(bool for_nodes) {
         }
 
         const auto png = stat.distribution.create_png();
-        sum_size += png.size;
+        sum_size += png.size();
 
         statement_insert_into_key_distributions
-            .bind_text(p.first)               // column: key
-            .bind_text(for_nodes ? "n" : "w") // column: object_type
-            .bind_blob(png.data, png.size)    // column: png
+            .bind_text(p.first)                // column: key
+            .bind_text(for_nodes ? "n" : "w")  // column: object_type
+            .bind_blob(png.data(), png.size()) // column: png
             .execute();
 
         stat.distribution.clear();
@@ -241,13 +241,13 @@ void TagStatsHandler::print_and_clear_tag_distribution_images(bool for_nodes) {
         GeoDistribution& geo = geodist.second;
 
         const auto png = geo.create_png();
-        sum_size += png.size;
+        sum_size += png.size();
 
         statement_insert_into_tag_distributions
-            .bind_text(geodist.first.first)   // column: key
-            .bind_text(geodist.first.second)  // column: value
-            .bind_text(for_nodes ? "n" : "w") // column: object_type
-            .bind_blob(png.data, png.size)    // column: png
+            .bind_text(geodist.first.first)    // column: key
+            .bind_text(geodist.first.second)   // column: value
+            .bind_text(for_nodes ? "n" : "w")  // column: object_type
+            .bind_blob(png.data(), png.size()) // column: png
             .execute();
 
         if (for_nodes) {
@@ -274,9 +274,8 @@ KeyStats& TagStatsHandler::get_stat(const char* key) {
         const auto sit = m_tags_stat.emplace(std::make_pair(m_string_store.add(key), KeyStats{}));
         assert(sit.second);
         return sit.first->second;
-    } else {
-        return it->second;
     }
+    return it->second;
 }
 
 void TagStatsHandler::collect_tag_stats(const osmium::OSMObject& object) {
@@ -336,17 +335,11 @@ TagStatsHandler::TagStatsHandler(Sqlite::Database& database,
     m_vout(vout),
     m_min_tag_combination_count(min_tag_combination_count),
     m_timer(time(nullptr)),
-    m_tags_stat(),
-    m_key_value_stats(),
-    m_key_value_geodistribution(),
-    m_relation_type_stats(),
-    m_max_timestamp(0),
     m_string_store(string_store_size),
     m_database(database),
     m_statistics_handler(database),
     m_map_to_int(map_to_int),
-    m_location_index(location_index),
-    m_last_type(osmium::item_type::node)
+    m_location_index(location_index)
 {
     if (!selection_database_name.empty()) {
         Sqlite::Database sdb(selection_database_name.c_str(), SQLITE_OPEN_READONLY);
@@ -430,7 +423,7 @@ void TagStatsHandler::before_ways() {
     Sqlite::Statement statement_insert_into_key_distributions{m_database, "INSERT INTO key_distributions (png) VALUES (?);"};
     m_database.begin_transaction();
     statement_insert_into_key_distributions
-        .bind_blob(png.data, png.size) // column: png
+        .bind_blob(png.data(), png.size()) // column: png
         .execute();
     m_database.commit();
 

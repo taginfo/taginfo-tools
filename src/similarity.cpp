@@ -32,21 +32,25 @@
 #include <unistd.h>
 #include <vector>
 
-const int MIN_STRLEN = 4;
-const int MAX_STRLEN = 120;
-const int MAX_EDIT_DISTANCE = 2;
+constexpr const int MIN_STRLEN = 4;
+constexpr const int MAX_STRLEN = 120;
+constexpr const int MAX_EDIT_DISTANCE = 2;
 
 /**
  * Compute Levenshtein edit distance. This is a very simple implementation of
  * the Levenshtein algorithm I copied from somewhere on the Internet, but it
  * is fast enough for our purpose here.
  */
-unsigned int edit_distance(const char* str1, int len1, const char* str2, int len2) noexcept {
+static unsigned int edit_distance(const char* str1, int len1, const char* str2, int len2) noexcept {
     static unsigned d[MAX_STRLEN][MAX_STRLEN];
 
     d[0][0] = 0;
-    for (int i = 1; i <= len1; ++i) d[i][0] = i;
-    for (int i = 1; i <= len2; ++i) d[0][i] = i;
+    for (int i = 1; i <= len1; ++i) {
+        d[i][0] = i;
+    }
+    for (int i = 1; i <= len2; ++i) {
+        d[0][i] = i;
+    }
 
     for (int i = 1; i <= len1; ++i) {
         for (int j = 1; j <= len2; ++j) {
@@ -61,7 +65,7 @@ unsigned int edit_distance(const char* str1, int len1, const char* str2, int len
 /**
  * Are the two given strings similar according to some metric?
  */
-int similarity(const char* str1, int len1, const char* str2, int len2) noexcept {
+static int similarity(const char* str1, int len1, const char* str2, int len2) noexcept {
     // Do not check very short strings, because they create too many false
     // positives.
     if (len1 < MIN_STRLEN || len2 < MIN_STRLEN) {
@@ -99,7 +103,7 @@ int similarity(const char* str1, int len1, const char* str2, int len2) noexcept 
  * Iterate over all (null-terminated) strings in the memory between begin and
  * end and find similar strings.
  */
-void find_similarities(const char* begin, const char* end, Sqlite::Statement& insert) {
+static void find_similarities(const char* begin, const char* end, Sqlite::Statement& insert) {
     int len1;
     for (const char* str1 = begin; str1 != end; str1 += len1 + 1) {
         len1 = std::strlen(str1);

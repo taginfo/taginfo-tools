@@ -40,11 +40,7 @@ public:
     explicit StatisticsHandler(Sqlite::Database& database) :
         Handler(),
         m_stats(),
-        m_stat_names(nullptr),
-        m_database(database),
-        m_id(0),
-        m_version(0),
-        m_tag_count(0) {
+        m_database(database) {
         // if you change anything in this array, also change the corresponding struct below
         static const char *sn[] = {
             "nodes",
@@ -85,7 +81,7 @@ public:
         m_stat_names = sn;
 
         // initialize all statistics to zero
-        for (int i=0; m_stat_names[i]; ++i) {
+        for (int i = 0; m_stat_names[i]; ++i) {
             reinterpret_cast<uint64_t*>(&m_stats)[i] = 0;
         }
     }
@@ -100,7 +96,7 @@ public:
             m_stats.max_node_id = m_id;
         }
         m_stats.node_tags += m_tag_count;
-        if (m_tag_count > static_cast<int64_t>(m_stats.max_tags_on_node)) {
+        if (m_tag_count > m_stats.max_tags_on_node) {
             m_stats.max_tags_on_node = m_tag_count;
         }
         if (m_version > static_cast<int64_t>(m_stats.max_node_version)) {
@@ -122,7 +118,7 @@ public:
 
         const auto way_nodes_size = way.nodes().size();
         m_stats.way_nodes += way_nodes_size;
-        if (m_tag_count > static_cast<int64_t>(m_stats.max_tags_on_way)) {
+        if (m_tag_count > m_stats.max_tags_on_way) {
             m_stats.max_tags_on_way = m_tag_count;
         }
         if (way_nodes_size > m_stats.max_nodes_on_way) {
@@ -156,7 +152,7 @@ public:
         m_stats.relation_tags += m_tag_count;
         const auto member_count = relation.members().size();
         m_stats.relation_members += member_count;
-        if (m_tag_count > static_cast<int64_t>(m_stats.max_tags_on_relation)) {
+        if (m_tag_count > m_stats.max_tags_on_relation) {
             m_stats.max_tags_on_relation = m_tag_count;
         }
         if (member_count > m_stats.max_members_on_relation) {
@@ -241,13 +237,13 @@ private:
         uint64_t max_changeset_id;
     } m_stats;
 
-    const char **m_stat_names;
+    const char **m_stat_names = nullptr;
 
     Sqlite::Database& m_database;
 
-    osmium::object_id_type m_id;
-    osmium::object_version_type m_version;
-    int m_tag_count;
+    osmium::object_id_type m_id = 0;
+    osmium::object_version_type m_version = 0;
+    std::size_t m_tag_count = 0;
 
     void update_common_stats(const osmium::OSMObject& object) noexcept {
         m_id        = object.id();

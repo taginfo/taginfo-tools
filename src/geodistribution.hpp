@@ -68,8 +68,8 @@ public:
             // if the position is out of bounds we return MAXINT
             return std::numeric_limits<uint32_t>::max();
         }
-        int x = (p.lon() - m_minx) / m_dx * m_width;
-        int y = (m_maxy - p.lat()) / m_dy * m_height;
+        auto x = static_cast<int>((p.lon() - m_minx) / m_dx * m_width);
+        auto y = static_cast<int>((m_maxy - p.lat()) / m_dy * m_height);
 
         if (x < 0) {
             x = 0;
@@ -185,6 +185,9 @@ public:
             m_color = gdImageColorAllocate(m_image, 180, 0, 0);
         }
 
+        Image(const Image&) = delete;
+        Image& operator=(const Image&) = delete;
+
         ~Image() {
             gdImageDestroy(m_image);
         }
@@ -203,35 +206,33 @@ public:
 
     public:
 
-        int size;
-        void* data;
+        int m_size = 0;
+        void* m_data;
 
         explicit Png(Image& image) :
-            size(0),
-            data(gdImagePngPtr(image.data(), &size)) {
+            m_data(gdImagePngPtr(image.data(), &m_size)) {
         }
 
         Png(const Png&) = delete;
-        Png(Png&&) = default;
-
         Png& operator=(const Png&) = delete;
+
+        Png(Png&&) = default;
         Png& operator=(Png&&) = default;
 
         ~Png() {
-            gdFree(data);
+            gdFree(m_data);
+        }
+
+        int size() const noexcept {
+            return m_size;
+        }
+
+        void* data() const noexcept {
+            return m_data;
         }
 
     }; // class Png
 
-    /**
-     * Create PNG image.
-     * You have to call free_png() to free the memory allocated for the
-     * PNG image once you are done with it.
-     *
-     * @param size Pointer to integer thats set to the size of the created
-     *        image.
-     * @returns Pointer to memory area with PNG image.
-     */
     Png create_png() const {
         Image image{c_width, c_height};
 
@@ -251,7 +252,7 @@ public:
             }
         }
 
-        return Png(image);
+        return Png{image};
     }
 
     static Png create_empty_png() {

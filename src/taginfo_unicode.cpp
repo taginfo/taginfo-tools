@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include <vector>
 
-const char* category_to_string(int8_t category) noexcept {
+static const char* category_to_string(int8_t category) noexcept {
     switch (category) {
         // letters
         case  1: return "Lu"; // uppercase letter
@@ -79,7 +79,7 @@ const char* category_to_string(int8_t category) noexcept {
     }
 }
 
-void get_unicode_info(const char* text, const icu::UnicodeString& us, Sqlite::Statement& insert) {
+static void get_unicode_info(const char* text, const icu::UnicodeString& us, Sqlite::Statement& insert) {
     bool allokay = true;
     for (const char* t = text; *t; ++t) {
         if (!(std::isalnum(*t) || *t == '_' || *t == ':' || *t == ' ' || *t == '.' || *t == '-')) {
@@ -151,7 +151,7 @@ void get_unicode_info(const char* text, const icu::UnicodeString& us, Sqlite::St
     }
 }
 
-void find_unicode_info(const char* begin, const char* end, Sqlite::Statement& insert) {
+static void find_unicode_info(const char* begin, const char* end, Sqlite::Statement& insert) {
     for (; begin != end; begin += std::strlen(begin) + 1) {
         get_unicode_info(begin, icu::UnicodeString::fromUTF8(begin), insert);
     }

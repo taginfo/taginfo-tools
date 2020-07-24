@@ -1,13 +1,19 @@
 ---
-Checks: '*,-fuchsia-*'
+Checks: '*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-fuchsia-*,-readability-implicit-bool-conversion'
 #
 #  For a list of check options, see:
 #  https://clang.llvm.org/extra/clang-tidy/checks/list.html
 #
 #  Disabled checks:
 #
+#  cppcoreguidelines-pro-bounds-pointer-arithmetic
+#    Still needed too often.
+#
 #  fuchsia-*
 #    Much too strict.
+#
+#  readability-implicit-bool-conversion
+#    I don't think this makes the code more readable.
 #
 #WarningsAsErrors: '*'
 ...
