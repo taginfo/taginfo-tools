@@ -23,13 +23,13 @@ target_compile_options(taginfo-similarity PRIVATE ${wopts})
 target_link_libraries(taginfo-similarity PRIVATE ${SQLITE_LIBRARY})
 
 add_executable(taginfo-sizes taginfo-sizes.cpp)
-target_include_directories(taginfo-sizes SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include ${OSMIUM_INCLUDE_DIRS})
+target_include_directories(taginfo-sizes SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/abseil-cpp ${OSMIUM_INCLUDE_DIRS})
 target_compile_options(taginfo-sizes PRIVATE ${wopts})
 
 add_executable(taginfo-stats taginfo-stats.cpp tagstats-handler.cpp util.cpp)
-target_include_directories(taginfo-stats SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include ${OSMIUM_INCLUDE_DIRS})
+target_include_directories(taginfo-stats SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/abseil-cpp ${OSMIUM_INCLUDE_DIRS})
 target_compile_options(taginfo-stats PRIVATE ${wopts})
-target_link_libraries(taginfo-stats PRIVATE ${OSMIUM_LIBRARIES} ${GD_LIBRARY} ${SQLITE_LIBRARY})
+target_link_libraries(taginfo-stats PRIVATE ${OSMIUM_LIBRARIES} ${GD_LIBRARY} ${SQLITE_LIBRARY} absl::flat_hash_map)
 set_pthread_on_target(taginfo-stats)
 
 add_executable(taginfo-unicode taginfo-unicode.cpp)

@@ -20,7 +20,6 @@ You need a C++14-compatible compiler.
 * [bz2lib](https://www.bzip.org/)
 * [zlib](https://www.zlib.net/)
 * [Expat](https://libexpat.github.io/)
-* [Sparse hash map](https://github.com/sparsehash/sparsehash)
 
 Ob Debian/Ubuntu install these like this:
 
@@ -32,7 +31,6 @@ apt install \
     libicu-dev \
     libosmium2-dev \
     libprotozero-dev \
-    libsparsehash-dev \
     libsqlite3-dev \
     zlib1g-dev
 ```
@@ -41,6 +39,12 @@ Use [Debian Backports](https://backports.debian.org/) or install `libosmium`
 and `protozero` manually if their versions are too old in your distribution.
 
 ## Building
+
+Update [abseil submodule](https://github.com/abseil/abseil-cpp) with:
+
+```
+git submodule update
+```
 
 Build as usual with CMake. For instance like this:
 

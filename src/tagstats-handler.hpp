@@ -36,15 +36,13 @@
 #include <osmium/util/memory.hpp>
 #include <osmium/util/verbose_output.hpp>
 
-#include <google/sparse_hash_map>
+#include <absl/container/flat_hash_map.h>
 
 #include <cassert>
 #include <cstdint>
 #include <limits>
-#include <map>
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include <utility>
 
 /**
@@ -157,11 +155,11 @@ public:
 using Counter32 = Counter<uint32_t>;
 using Counter64 = Counter<uint32_t>;
 
-using value_hash_map_type = google::sparse_hash_map<const char*, Counter32, djb2_hash, eqstr>;
+using value_hash_map_type = absl::flat_hash_map<const char*, Counter32, djb2_hash, eqstr>;
 
-using user_hash_map_type = google::sparse_hash_map<osmium::user_id_type, uint32_t>;
+using user_hash_map_type = absl::flat_hash_map<osmium::user_id_type, uint32_t>;
 
-using combination_hash_map_type = google::sparse_hash_map<const char*, Counter32, djb2_hash, eqstr>;
+using combination_hash_map_type = absl::flat_hash_map<const char*, Counter32, djb2_hash, eqstr>;
 
 /**
  * A KeyStats object holds all statistics for an OSM tag key.
@@ -244,7 +242,7 @@ public:
 
 }; // class KeyStats
 
-using key_hash_map_type = std::unordered_map<const char*, KeyStats, djb2_hash, eqstr>;
+using key_hash_map_type = absl::flat_hash_map<const char*, KeyStats, djb2_hash, eqstr>;
 
 /**
  * A KeyValueStats object holds some statistics for an OSM tag (key/value pair).
@@ -265,15 +263,15 @@ public:
 
 }; // class KeyValueStats
 
-using key_value_hash_map_type = std::unordered_map<const char*, KeyValueStats, djb2_hash, eqstr>;
-using key_value_geodistribution_hash_map_type = std::unordered_map<std::pair<const char*, const char*>, GeoDistribution, djb2_hash, eqstr>;
+using key_value_hash_map_type = absl::flat_hash_map<const char*, KeyValueStats, djb2_hash, eqstr>;
+using key_value_geodistribution_hash_map_type = absl::flat_hash_map<std::pair<const char*, const char*>, GeoDistribution, djb2_hash, eqstr>;
 
 class RelationTypeStats {
 
     uint64_t m_count = 0;
     Counter64 m_members;
 
-    std::map<std::string, Counter32> m_role_counts;
+    absl::flat_hash_map<std::string, Counter32> m_role_counts;
 
 public:
 
@@ -285,7 +283,7 @@ public:
         return m_members;
     }
 
-    const std::map<std::string, Counter32>& role_counts() const noexcept {
+    const absl::flat_hash_map<std::string, Counter32>& role_counts() const noexcept {
         return m_role_counts;
     }
 
@@ -322,7 +320,7 @@ class TagStatsHandler : public osmium::handler::Handler {
 
     key_value_geodistribution_hash_map_type m_key_value_geodistribution;
 
-    std::map<std::string, RelationTypeStats> m_relation_type_stats;
+    absl::flat_hash_map<std::string, RelationTypeStats> m_relation_type_stats;
 
     time_t m_max_timestamp = 0;
 

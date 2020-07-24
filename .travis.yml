@@ -16,7 +16,6 @@ addons:
   apt:
     packages:
       - libgd-dev
-      - libsparsehash-dev
       - libutfcpp-dev
       - sqlite3
 

@@ -36,7 +36,6 @@
 #include <ctime>
 #include <iomanip>
 #include <iterator>
-#include <map>
 #include <string>
 #include <utility>
 
@@ -58,18 +57,17 @@ static split_result split_key_value(const char* kv) noexcept {
 }
 
 template <typename T>
-uint64_t show_std_unordered_map_memory_usage(osmium::util::VerboseOutput& out, const T& hash_map) {
-    const auto value_size = sizeof(typename T::value_type);
+uint64_t show_memory_usage(osmium::util::VerboseOutput& out, const T& hash_map) {
+    const auto entry_size = sizeof(std::pair<const typename T::key_type, typename T::value_type>) + 1;
     const auto size = hash_map.size();
     const auto buckets = hash_map.bucket_count();
 
-    const auto sum = size * (value_size + sizeof(void*)) + // members and next ptr * size
-                     buckets * (sizeof(size_t) + sizeof(void*)); // bucket size and head ptr
+    const uint64_t sum = entry_size * buckets;
 
     out << std::setw(8) << (sum / 1024) << " kB [size="
         << size << " buckets="
-        << buckets << " sizeof(value_type)="
-        << value_size << "]\n";
+        << buckets << " sizeof(entry)="
+        << entry_size << "]\n";
 
     return sum;
 }
@@ -605,13 +603,13 @@ void TagStatsHandler::write_to_database() {
     m_vout << "\n" << "Estimated memory usage:" << "\n";
 
     m_vout << "  tags_stat: ............... ";
-    uint64_t total = show_std_unordered_map_memory_usage(m_vout, m_tags_stat);
+    uint64_t total = show_memory_usage(m_vout, m_tags_stat);
 
     m_vout << "  key_value_stats: ......... ";
-    total += show_std_unordered_map_memory_usage(m_vout, m_key_value_stats);
+    total += show_memory_usage(m_vout, m_key_value_stats);
 
     m_vout << "  key_value_geodistribution: ";
-    total += show_std_unordered_map_memory_usage(m_vout, m_key_value_geodistribution);
+    total += show_memory_usage(m_vout, m_key_value_geodistribution);
 
     m_vout << "  relation_type_stats: ..... ";
     total += show_std_map_memory_usage(m_vout, m_relation_type_stats);
