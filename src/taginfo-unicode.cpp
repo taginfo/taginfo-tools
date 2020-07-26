@@ -159,7 +159,7 @@ static void find_unicode_info(const char* begin, const char* end, Sqlite::Statem
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        std::cerr << "taginfo_unicode DATABASE\n";
+        std::cerr << "taginfo-unicode DATABASE\n";
         return 1;
     }
 

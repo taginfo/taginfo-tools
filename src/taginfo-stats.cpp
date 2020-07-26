@@ -35,7 +35,7 @@ int GeoDistribution::c_width;
 int GeoDistribution::c_height;
 
 static void print_help() {
-    std::cout << "tagstats [OPTIONS] OSMFILE DATABASE\n\n" \
+    std::cout << "taginfo-stats [OPTIONS] OSMFILE DATABASE\n\n" \
               << "This program is part of taginfo. It calculates statistics on OSM tags\n" \
               << "from OSMFILE and puts them into DATABASE (an SQLite database).\n" \
               << "\nOptions:\n" \
@@ -139,7 +139,7 @@ int main(int argc, char* argv[]) {
     }
 
     osmium::util::VerboseOutput vout{true};
-    vout << "Starting tagstats...\n";
+    vout << "Starting taginfo-stats...\n";
 
     GeoDistribution::set_dimensions(width, height);
     osmium::io::File input_file{argv[optind]};

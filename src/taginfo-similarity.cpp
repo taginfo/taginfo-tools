@@ -121,7 +121,7 @@ static void find_similarities(const char* begin, const char* end, Sqlite::Statem
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        std::cerr << "similarity DATABASE\n";
+        std::cerr << "taginfo-similarity DATABASE\n";
         return 1;
     }
 
