@@ -45,10 +45,10 @@ jobs:
     - env: CC='gcc-7' CXX='g++-7' BUILD_TYPE='Dev'
 
     - dist: focal
-      env: CC='gcc-7' CXX='g++-7' BUILD_TYPE='Dev'
+      env: CC='gcc-9' CXX='g++-9' BUILD_TYPE='Dev'
 
     - dist: focal
-      env: CC='gcc-7' CXX='g++-7' BUILD_TYPE='Release'
+      env: CC='gcc-9' CXX='g++-9' BUILD_TYPE='Release'
 
 #-----------------------------------------------------------------------------
 
