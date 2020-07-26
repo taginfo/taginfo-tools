@@ -35,6 +35,19 @@ apt install \
     zlib1g-dev
 ```
 
+Use [Debian Backports](https://backports.debian.org/) or install `libosmium`
+and `protozero` manually if their versions are too old in your distribution.
+
+## Building
+
+Build as usual with CMake. For instance like this:
+
+```
+mkdir build && cd build
+cmake ..
+make
+```
+
 ## Programs
 
 * `osmstats` - Create statistics from a planet or other OSM file (not used in taginfo)
