@@ -17,6 +17,7 @@ addons_shortcuts:
     apt:
       packages:
         - libgd-dev
+        - libsparsehash-dev
         - libutfcpp-dev
 
 #-----------------------------------------------------------------------------
