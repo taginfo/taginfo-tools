@@ -19,7 +19,7 @@
 
 */
 
-#include "statistics_handler.hpp"
+#include "statistics-handler.hpp"
 
 #include <osmium/handler.hpp>
 #include <osmium/io/any_input.hpp>

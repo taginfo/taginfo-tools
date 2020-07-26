@@ -21,8 +21,8 @@
 
 #include "geodistribution.hpp"
 #include "hash.hpp"
-#include "string_store.hpp"
-#include "tagstats_handler.hpp"
+#include "string-store.hpp"
+#include "tagstats-handler.hpp"
 
 #include <sqlite.hpp>
 

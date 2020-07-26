@@ -20,8 +20,8 @@
 */
 
 #include "geodistribution.hpp"
-#include "statistics_handler.hpp"
-#include "tagstats_handler.hpp"
+#include "statistics-handler.hpp"
+#include "tagstats-handler.hpp"
 
 #include <getopt.h>
 

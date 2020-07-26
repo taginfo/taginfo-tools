@@ -37,11 +37,11 @@ apt install \
 
 ## Programs
 
-* `tagstats` - Create statistics from a planet or other OSM file
-* `osmstats` - Create statistics from a planet or other OSM file
-* `similarity` - Find similarities between OSM tags
-* `sizes` - Debugging tool to print out sizes of important structs from tagstats
-* `taginfo_unicode` - Categorizes OSM tags based on unicode character types
+* `osmstats` - Create statistics from a planet or other OSM file (not used in taginfo)
+* `taginfo-similarity` - Find similarities between OSM tags
+* `taginfo-sizes` - Debugging tool to print out sizes of important structs from `taginfo-stats`
+* `taginfo-stats` - Create statistics from a planet or other OSM file
+* `taginfo-unicode` - Categorizes OSM tags based on unicode character types
 
 ## Contact
 
