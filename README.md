@@ -6,8 +6,7 @@ file. These are used as part of [taginfo](https://github.com/taginfo/taginfo).
 They used to "live" in the
 [main taginfo repository](https://github.com/taginfo/taginfo).
 
-[![Travis Build Status](https://travis-ci.org/taginfo/taginfo-tools.svg?branch=master)
-https://travis-ci.org/github/taginfo/taginfo-tools)
+[![Travis Build Status](https://travis-ci.org/taginfo/taginfo-tools.svg?branch=master)](https://travis-ci.org/github/taginfo/taginfo-tools)
 
 ## Prerequisites
 
@@ -19,6 +18,7 @@ https://travis-ci.org/github/taginfo/taginfo-tools)
 * [bz2lib](https://www.bzip.org/)
 * [zlib](https://www.zlib.net/)
 * [Expat](https://libexpat.github.io/)
+* [Sparse hash map](https://github.com/sparsehash/sparsehash)
 
 Ob Debian/Ubuntu install these like this:
 
@@ -30,6 +30,7 @@ apt install \
     libicu-dev \
     libosmium2-dev \
     libprotozero-dev \
+    libsparsehash-dev \
     libsqlite3-dev \
     zlib1g-dev
 ```
