@@ -181,7 +181,7 @@ public:
     }
 
     void write_to_database() {
-        Sqlite::Statement statement_insert_into_main_stats(m_database, "INSERT INTO stats (key, value) VALUES (?, ?);");
+        Sqlite::Statement statement_insert_into_main_stats{m_database, "INSERT INTO stats (key, value) VALUES (?, ?);"};
         m_database.begin_transaction();
 
         for (int i = 0; m_stat_names[i]; ++i) {

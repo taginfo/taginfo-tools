@@ -25,21 +25,31 @@
 #include <osmium/io/any_input.hpp>
 #include <osmium/visitor.hpp>
 
+#include <exception>
 #include <iostream>
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         std::cerr << "Usage: " << argv[0] << " OSMFILE DATABASE\n";
-        std::exit(1);
+        return 1;
     }
 
-    osmium::io::File input_file{argv[1]};
+    try {
+        osmium::io::File input_file{argv[1]};
 
-    Sqlite::Database db{argv[2], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
-    db.exec("CREATE TABLE stats (key TEXT, value INT64);");
+        Sqlite::Database db{argv[2], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
+        db.exec("CREATE TABLE stats (key TEXT, value INT64);");
 
-    StatisticsHandler handler{db};
-    osmium::io::Reader reader{input_file};
-    osmium::apply(reader, handler);
+        StatisticsHandler handler{db};
+        osmium::io::Reader reader{input_file};
+        osmium::apply(reader, handler);
+
+        handler.write_to_database();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 2;
+    }
+
+    return 0;
 }
 
