@@ -12,13 +12,12 @@ dist: bionic
 
 #-----------------------------------------------------------------------------
 
-addons_shortcuts:
-  addons_packages: &packages
-    apt:
-      packages:
-        - libgd-dev
-        - libsparsehash-dev
-        - libutfcpp-dev
+addons:
+  apt:
+    packages:
+      - libgd-dev
+      - libsparsehash-dev
+      - libutfcpp-dev
 
 #-----------------------------------------------------------------------------
 
@@ -28,31 +27,27 @@ jobs:
     # Linux Clang Builds
 
     - dist: xenial
-      compiler: linux-clang7-dev
-      addons: *packages
       env: CC='clang' CXX='clang++' BUILD_TYPE='Dev'
 
-    - compiler: linux-clang7-dev
-      addons: *packages
+    - env: CC='clang' CXX='clang++' BUILD_TYPE='Dev'
+
+    - dist: focal
       env: CC='clang' CXX='clang++' BUILD_TYPE='Dev'
 
-    - compiler: linux-clang7-release
-      addons: *packages
+    - dist: focal
       env: CC='clang' CXX='clang++' BUILD_TYPE='Release'
 
     # Linux GCC Builds
 
     - dist: xenial
-      compiler: linux-gcc5-dev
-      addons: *packages
       env: CC='gcc-5' CXX='g++-5' BUILD_TYPE='Dev'
 
-    - compiler: linux-gcc7-dev
-      addons: *packages
+    - env: CC='gcc-7' CXX='g++-7' BUILD_TYPE='Dev'
+
+    - dist: focal
       env: CC='gcc-7' CXX='g++-7' BUILD_TYPE='Dev'
 
-    - compiler: linux-gcc7-release
-      addons: *packages
+    - dist: focal
       env: CC='gcc-7' CXX='g++-7' BUILD_TYPE='Release'
 
 #-----------------------------------------------------------------------------
