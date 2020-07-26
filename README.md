@@ -6,6 +6,9 @@ file. These are used as part of [taginfo](https://github.com/taginfo/taginfo).
 They used to "live" in the
 [main taginfo repository](https://github.com/taginfo/taginfo).
 
+[![Travis Build Status](https://travis-ci.org/taginfo/taginfo-tools.svg?branch=master)
+https://travis-ci.org/github/taginfo/taginfo-tools)
+
 ## Prerequisites
 
 * [libgd](https://www.libgd.org/)

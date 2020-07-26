@@ -6,7 +6,9 @@
 
 language: generic
 
-sudo: false
+os: linux
+
+dist: bionic
 
 #-----------------------------------------------------------------------------
 
@@ -14,65 +16,53 @@ addons_shortcuts:
   addons_packages: &packages
     apt:
       packages:
-        - libbz2-dev
-        - libexpat1-dev
         - libgd-dev
-        - libicu-dev
-        - libosmium2-dev
-        - libprotozero-dev
-        - libsqlite3-dev
-        - zlib1g-dev
+        - libutfcpp-dev
 
 #-----------------------------------------------------------------------------
 
-matrix:
+jobs:
   include:
 
     # Linux Clang Builds
 
-    - os: linux
-      dist: xenial
+    - dist: xenial
       compiler: linux-clang7-dev
       addons: *packages
-      env: CC='clang-7' CXX='clang++-7' BUILD_TYPE='Dev'
+      env: CC='clang' CXX='clang++' BUILD_TYPE='Dev'
 
-    - os: linux
-      dist: bionic
-      compiler: linux-clang7-dev
+    - compiler: linux-clang7-dev
       addons: *packages
-      env: CC='clang-7' CXX='clang++-7' BUILD_TYPE='Dev'
+      env: CC='clang' CXX='clang++' BUILD_TYPE='Dev'
 
-    - os: linux
-      dist: bionic
-      compiler: linux-clang7-release
+    - compiler: linux-clang7-release
       addons: *packages
-      env: CC='clang-7' CXX='clang++-7' BUILD_TYPE='Release'
+      env: CC='clang' CXX='clang++' BUILD_TYPE='Release'
 
     # Linux GCC Builds
 
-    - os: linux
-      dist: xenial
+    - dist: xenial
       compiler: linux-gcc5-dev
       addons: *packages
       env: CC='gcc-5' CXX='g++-5' BUILD_TYPE='Dev'
 
-    - os: linux
-      dist: bionic
-      compiler: linux-gcc7-dev
+    - compiler: linux-gcc7-dev
       addons: *packages
       env: CC='gcc-7' CXX='g++-7' BUILD_TYPE='Dev'
 
-    - os: linux
-      dist: bionic
-      compiler: linux-gcc7-release
+    - compiler: linux-gcc7-release
       addons: *packages
       env: CC='gcc-7' CXX='g++-7' BUILD_TYPE='Release'
 
 #-----------------------------------------------------------------------------
 
+install:
+  - git clone --quiet --depth 1 https://github.com/osmcode/libosmium.git ../libosmium
+  - git clone --quiet --depth 1 https://github.com/mapbox/protozero.git ../protozero
+
 before_script:
   - mkdir build && cd build
-  - cmake -LA .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+  - cmake -LA .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DOSMIUM_INCLUDE_DIR=${TRAVIS_BUILD_DIR}/../libosmium/include -DPROTOZERO_INCLUDE_DIR=${TRAVIS_BUILD_DIR}/../protozero/include
 
 script:
   - make VERBOSE=1
