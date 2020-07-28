@@ -64,9 +64,11 @@ class LocationIndex {
     template <typename T>
     static std::unique_ptr<map_type<T>> create_map(const std::string& location_index_type) {
         osmium::index::register_map<osmium::unsigned_object_id_type, T, osmium::index::map::DenseMemArray>("DenseMemArray");
-        osmium::index::register_map<osmium::unsigned_object_id_type, T, osmium::index::map::DenseMmapArray>("DenseMmapArray");
         osmium::index::register_map<osmium::unsigned_object_id_type, T, osmium::index::map::SparseMemArray>("SparseMemArray");
+#ifdef __linux__
+        osmium::index::register_map<osmium::unsigned_object_id_type, T, osmium::index::map::DenseMmapArray>("DenseMmapArray");
         osmium::index::register_map<osmium::unsigned_object_id_type, T, osmium::index::map::SparseMmapArray>("SparseMmapArray");
+#endif
         const auto& map_factory = osmium::index::MapFactory<osmium::unsigned_object_id_type, T>::instance();
         return map_factory.create_map(location_index_type);
     }
