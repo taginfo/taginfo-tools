@@ -1,0 +1,12 @@
+n11 v1 dV c11 i10 uuser x1.0 y2.0 Tamenity=post_box
+n12 v2 dV c12 x2.0 y2.0
+n13 v1 dV c12 x2.0 y2.2
+n14 v1 dV c12 x2.2 y2.2
+n15 v1 dV c12 x2.2 y2.0
+n16 v1 dV c12 x2.1 y2.3
+n17 v1 dV c12 x2.1 y2.4
+w20 v1 dV c12 i12 usomebody Nn12,n13 Thighway=primary,name=HighStreet
+w21 v1 dV c12 i12 usomebody Nn14,n15 Thighway=secondary
+w22 v1 dV c12 i12 usomebody Nn16,n17 Thighwy=secondary
+w23 v1 dV c12 i12 usomebody Nn12,n13,n14,n15,n12 Tleisure=park
+r30 v1 dV c13 i12 usomebody Mw21@ Ttype=route

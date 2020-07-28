@@ -18,6 +18,7 @@ addons:
       - libgd-dev
       - libsparsehash-dev
       - libutfcpp-dev
+      - sqlite3
 
 #-----------------------------------------------------------------------------
 
@@ -61,6 +62,6 @@ before_script:
   - cmake -LA .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DOSMIUM_INCLUDE_DIR=${TRAVIS_BUILD_DIR}/../libosmium/include -DPROTOZERO_INCLUDE_DIR=${TRAVIS_BUILD_DIR}/../protozero/include -DCMAKE_CXX_FLAGS=-Werror
 
 script:
-  - make VERBOSE=1
+  - make VERBOSE=1 && ctest --output-on-failure
 
 #-----------------------------------------------------------------------------
