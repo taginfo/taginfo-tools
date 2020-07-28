@@ -30,6 +30,12 @@
 #include <osmium/util/verbose_output.hpp>
 #include <osmium/visitor.hpp>
 
+#ifdef __linux__
+# define DEFAULT_INDEX_TYPE "SparseMmapArray"
+#else
+# define DEFAULT_INDEX_TYPE "SparseMemArray"
+#endif
+
 GeoDistribution::geo_distribution_type GeoDistribution::c_distribution_all;
 int GeoDistribution::c_width;
 int GeoDistribution::c_height;
@@ -40,7 +46,7 @@ static void print_help() {
               << "from OSMFILE and puts them into DATABASE (an SQLite database).\n" \
               << "\nOptions:\n" \
               << "  -H, --help                    Print this help message and exit\n" \
-              << "  -i, --index=INDEX_TYPE        Set index type for location index\n" \
+              << "  -i, --index=INDEX_TYPE        Set index type for location index (default: " DEFAULT_INDEX_TYPE ")\n" \
               << "  -I, --show-index-types        Show available index types for location index\n" \
               << "  -m, --min-tag-combination-count=N  Tag combinations not appearing this often\n" \
               << "                                     are not written to database\n" \
@@ -74,7 +80,7 @@ int main(int argc, char* argv[]) {
 
     std::string selection_database_name;
 
-    std::string index_type_name = "SparseMmapArray";
+    std::string index_type_name = DEFAULT_INDEX_TYPE;
 
     double top    =   90;
     double right  =  180;
@@ -100,9 +106,11 @@ int main(int argc, char* argv[]) {
             case 'I':
                 std::cout << "Available index types:\n";
                 std::cout << "  DenseMemArray\n";
-                std::cout << "  DenseMmapArray\n";
                 std::cout << "  SparseMemArray\n";
+#ifdef __linux__
+                std::cout << "  DenseMmapArray\n";
                 std::cout << "  SparseMmapArray\n";
+#endif
                 std::exit(0);
             case 's':
                 selection_database_name = optarg;
