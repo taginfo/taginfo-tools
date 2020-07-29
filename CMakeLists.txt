@@ -51,6 +51,9 @@ endif()
 
 #-----------------------------------------------------------------------------
 
+option(ERROR_ON_WARNINGS "Generate error for compiler warnings" OFF)
+set(WARNING_OPTIONS -Wall -Wextra -pedantic -Wredundant-decls -Wdisabled-optimization -Wctor-dtor-privacy -Wnon-virtual-dtor -Woverloaded-virtual -Wsign-promo -Wold-style-cast CACHE STRING "Warning options")
+
 add_subdirectory(src)
 
 enable_testing()

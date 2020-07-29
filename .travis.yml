@@ -64,7 +64,7 @@ install:
 
 before_script:
   - mkdir build && cd build
-  - cmake -LA .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DOSMIUM_INCLUDE_DIR=${TRAVIS_BUILD_DIR}/../libosmium/include -DPROTOZERO_INCLUDE_DIR=${TRAVIS_BUILD_DIR}/../protozero/include -DCMAKE_CXX_FLAGS=-Werror
+  - cmake -LA .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DOSMIUM_INCLUDE_DIR=${TRAVIS_BUILD_DIR}/../libosmium/include -DPROTOZERO_INCLUDE_DIR=${TRAVIS_BUILD_DIR}/../protozero/include -DERROR_ON_WARNINGS=ON
 
 script:
   - make VERBOSE=1 && ctest --output-on-failure
