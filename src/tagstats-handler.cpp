@@ -20,7 +20,6 @@
 */
 
 #include "geodistribution.hpp"
-#include "hash.hpp"
 #include "string-store.hpp"
 #include "tagstats-handler.hpp"
 
@@ -32,7 +31,9 @@
 
 #include <array>
 #include <cassert>
+#include <cstdint>
 #include <cstring>
+#include <ctime>
 #include <iomanip>
 #include <iterator>
 #include <map>
@@ -121,9 +122,9 @@ static uint64_t show_location_index_memory_usage(osmium::util::VerboseOutput& ou
 }
 
 void TagStatsHandler::timer_info(const char* msg) {
-    const auto duration = time(nullptr) - m_timer;
+    const auto duration = std::time(nullptr) - m_timer;
     m_vout << "  " << msg << " took " << duration << " seconds (about " << duration / 60 << " minutes)\n";
-    m_timer = time(nullptr);
+    m_timer = std::time(nullptr);
 }
 
 void TagStatsHandler::update_key_combination_hash(osmium::item_type type,
@@ -337,7 +338,7 @@ TagStatsHandler::TagStatsHandler(Sqlite::Database& database,
     Handler(),
     m_vout(vout),
     m_min_tag_combination_count(min_tag_combination_count),
-    m_timer(time(nullptr)),
+    m_timer(std::time(nullptr)),
     m_string_store(string_store_size),
     m_database(database),
     m_statistics_handler(database),
@@ -382,7 +383,7 @@ TagStatsHandler::TagStatsHandler(Sqlite::Database& database,
 
     m_vout << "------------------------------------------------------------------------------\n";
     m_vout << "Processing nodes...\n";
-    m_timer = time(nullptr);
+    m_timer = std::time(nullptr);
 }
 
 void TagStatsHandler::node(const osmium::Node& node) {
@@ -491,7 +492,7 @@ void TagStatsHandler::write_to_database() {
 
     m_database.begin_transaction();
 
-    struct tm* tm = gmtime(&m_max_timestamp);
+    struct tm* tm = std::gmtime(&m_max_timestamp);
     static std::array<char, 20> max_timestamp_str; // thats enough space for the timestamp generated from the pattern in the next line
     strftime(max_timestamp_str.begin(), max_timestamp_str.size(), "%Y-%m-%d %H:%M:%S", tm);
     statement_update_meta.bind_text(max_timestamp_str.cbegin()).execute();

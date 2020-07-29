@@ -21,8 +21,10 @@
 
 #include "statistics-handler.hpp"
 
-#include <osmium/handler.hpp>
+#include <sqlite.hpp>
+
 #include <osmium/io/any_input.hpp>
+#include <osmium/io/file.hpp>
 #include <osmium/visitor.hpp>
 
 #include <exception>

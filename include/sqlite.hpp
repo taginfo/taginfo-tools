@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <sqlite3.h>
+#include <sqlite3.h> // IWYU pragma: export
 
 /**
  *  @brief The %Sqlite classes wrap the %Sqlite C library.

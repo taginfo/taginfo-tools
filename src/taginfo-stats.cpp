@@ -20,16 +20,19 @@
 */
 
 #include "geodistribution.hpp"
-#include "statistics-handler.hpp"
 #include "tagstats-handler.hpp"
 #include "util.hpp"
 
-#include <getopt.h>
+#include <sqlite.hpp>
 
 #include <osmium/io/any_input.hpp>
-#include <osmium/osm/entity_bits.hpp>
+#include <osmium/io/file.hpp>
 #include <osmium/util/verbose_output.hpp>
 #include <osmium/visitor.hpp>
+
+#include <getopt.h>
+
+#include <string>
 
 #ifdef __linux__
 static const char* default_index_type = "SparseMmapArray";

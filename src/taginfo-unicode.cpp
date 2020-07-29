@@ -26,12 +26,13 @@
 #include <unicode/unistr.h>
 
 #include <array>
+#include <cctype>
+#include <cstdint>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <exception>
 #include <iostream>
-#include <vector>
+#include <string>
 
 static const char* category_to_string(int8_t category) noexcept {
     switch (category) {

@@ -21,16 +21,11 @@
 
 #include <sqlite.hpp>
 
-#include <cassert>
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
-#include <fcntl.h>
 #include <iostream>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <vector>
+#include <string>
 
 constexpr const int MIN_STRLEN = 4;
 constexpr const int MAX_STRLEN = 120;

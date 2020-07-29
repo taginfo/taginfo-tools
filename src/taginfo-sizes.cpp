@@ -19,6 +19,8 @@
 
 */
 
+#include "geodistribution.hpp"
+#include "string-store.hpp"
 #include "tagstats-handler.hpp"
 
 #include <iostream>

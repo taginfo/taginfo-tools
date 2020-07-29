@@ -27,8 +27,6 @@
 #include "statistics-handler.hpp"
 #include "string-store.hpp"
 
-#include <sqlite.hpp>
-
 #include <osmium/handler.hpp>
 #include <osmium/index/map/dense_mem_array.hpp>
 #include <osmium/index/map/dense_mmap_array.hpp>
@@ -40,9 +38,10 @@
 #include <google/sparse_hash_map>
 
 #include <cassert>
-#include <fstream>
-#include <iostream>
+#include <cstdint>
+#include <limits>
 #include <map>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <utility>
