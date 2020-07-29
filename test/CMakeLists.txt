@@ -8,7 +8,7 @@
 
 # Unit tests
 
-add_executable(unit-tests unit-tests.cpp test-hash.cpp)
+add_executable(unit-tests unit-tests.cpp test-hash.cpp test-util.cpp ../src/util.cpp)
 target_include_directories(unit-tests SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src catch)
 add_test(NAME unit-tests COMMAND unit-tests WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 

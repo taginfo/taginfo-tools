@@ -41,8 +41,8 @@ constexpr const int MAX_EDIT_DISTANCE = 2;
  * the Levenshtein algorithm I copied from somewhere on the Internet, but it
  * is fast enough for our purpose here.
  */
-static unsigned int edit_distance(const char* str1, int len1, const char* str2, int len2) noexcept {
-    static unsigned d[MAX_STRLEN][MAX_STRLEN];
+static int edit_distance(const char* str1, int len1, const char* str2, int len2) noexcept {
+    static int d[MAX_STRLEN][MAX_STRLEN];
 
     d[0][0] = 0;
     for (int i = 1; i <= len1; ++i) {
@@ -54,8 +54,8 @@ static unsigned int edit_distance(const char* str1, int len1, const char* str2, 
 
     for (int i = 1; i <= len1; ++i) {
         for (int j = 1; j <= len2; ++j) {
-            d[i][j] = std::min( std::min(d[i - 1][j] + 1,d[i][j - 1] + 1),
-                                d[i - 1][j - 1] + (str1[i - 1] == str2[j - 1] ? 0 : 1) );
+            d[i][j] = std::min(std::min(d[i - 1][j] + 1, d[i][j - 1] + 1),
+                               d[i - 1][j - 1] + (str1[i - 1] == str2[j - 1] ? 0 : 1));
         }
     }
 
@@ -125,19 +125,24 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    std::string data;
+    try {
+        std::string data;
 
-    Sqlite::Database db{argv[1], SQLITE_OPEN_READWRITE};
-    Sqlite::Statement select{db, "SELECT key FROM keys ORDER BY key"};
-    while (select.read()) {
-        data += select.get_text_ptr(0);
-        data += '\0';
+        Sqlite::Database db{argv[1], SQLITE_OPEN_READWRITE};
+        Sqlite::Statement select{db, "SELECT key FROM keys ORDER BY key"};
+        while (select.read()) {
+            data += select.get_text_ptr(0);
+            data += '\0';
+        }
+
+        Sqlite::Statement insert{db, "INSERT INTO similar_keys (key1, key2, similarity) VALUES (?, ?, ?)"};
+        db.begin_transaction();
+        find_similarities(data.c_str(), data.c_str() + data.size(), insert);
+        db.commit();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 2;
     }
-
-    Sqlite::Statement insert{db, "INSERT INTO similar_keys (key1, key2, similarity) VALUES (?, ?, ?)"};
-    db.begin_transaction();
-    find_similarities(data.c_str(), data.c_str() + data.size(), insert);
-    db.commit();
 
     return 0;
 }

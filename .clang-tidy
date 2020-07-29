@@ -1,16 +1,33 @@
 ---
-Checks: '*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-fuchsia-*,-readability-implicit-bool-conversion'
+Checks: '*,-cppcoreguidelines-avoid-c-arrays,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-constant-array-index,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-vararg,-hicpp-avoid-c-arrays,-hicpp-vararg,-fuchsia-*,-google-runtime-references,-hicpp-no-array-decay,-modernize-avoid-c-arrays,-readability-implicit-bool-conversion,-readability-magic-numbers'
 #
 #  For a list of check options, see:
 #  https://clang.llvm.org/extra/clang-tidy/checks/list.html
 #
 #  Disabled checks:
 #
+#  cppcoreguidelines-avoid-magic-numbers
+#  readability-magic-numbers
+#    Sometimes givings things a name doesn't make it better.
+#
+#  cppcoreguidelines-avoid-c-arrays
+#  cppcoreguidelines-pro-bounds-array-to-pointer-decay
+#  cppcoreguidelines-pro-bounds-constant-array-index
 #  cppcoreguidelines-pro-bounds-pointer-arithmetic
+#  hicpp-avoid-c-arrays
+#  hicpp-no-array-decay
+#  modernize-avoid-c-arrays
 #    Still needed too often.
+#
+#  cppcoreguidelines-pro-type-vararg
+#  hicpp-vararg
+#    Sometimes still needed.
 #
 #  fuchsia-*
 #    Much too strict.
+#
+#  google-runtime-references
+#    Different style.
 #
 #  readability-implicit-bool-conversion
 #    I don't think this makes the code more readable.

@@ -22,6 +22,7 @@
 #include "geodistribution.hpp"
 #include "statistics-handler.hpp"
 #include "tagstats-handler.hpp"
+#include "util.hpp"
 
 #include <getopt.h>
 
@@ -31,9 +32,9 @@
 #include <osmium/visitor.hpp>
 
 #ifdef __linux__
-# define DEFAULT_INDEX_TYPE "SparseMmapArray"
+static const char* default_index_type = "SparseMmapArray";
 #else
-# define DEFAULT_INDEX_TYPE "SparseMemArray"
+static const char* default_index_type = "SparseMemArray";
 #endif
 
 GeoDistribution::geo_distribution_type GeoDistribution::c_distribution_all;
@@ -46,7 +47,7 @@ static void print_help() {
               << "from OSMFILE and puts them into DATABASE (an SQLite database).\n" \
               << "\nOptions:\n" \
               << "  -H, --help                    Print this help message and exit\n" \
-              << "  -i, --index=INDEX_TYPE        Set index type for location index (default: " DEFAULT_INDEX_TYPE ")\n" \
+              << "  -i, --index=INDEX_TYPE        Set index type for location index (default: " << default_index_type << ")\n" \
               << "  -I, --show-index-types        Show available index types for location index\n" \
               << "  -m, --min-tag-combination-count=N  Tag combinations not appearing this often\n" \
               << "                                     are not written to database\n" \
@@ -61,7 +62,7 @@ static void print_help() {
 }
 
 int main(int argc, char* argv[]) {
-    static struct option long_options[] = {
+    static const option long_options[] = {
         {"help",                      no_argument,       nullptr, 'H'},
         {"index",                     required_argument, nullptr, 'i'},
         {"show-index-types",          no_argument,       nullptr, 'I'},
@@ -80,12 +81,12 @@ int main(int argc, char* argv[]) {
 
     std::string selection_database_name;
 
-    std::string index_type_name = DEFAULT_INDEX_TYPE;
+    std::string index_type_name = default_index_type;
 
-    double top    =   90;
-    double right  =  180;
-    double bottom =  -90;
-    double left   = -180;
+    double top    =   90.0;
+    double right  =  180.0;
+    double bottom =  -90.0;
+    double left   = -180.0;
 
     unsigned int width  = 360;
     unsigned int height = 180;
@@ -119,16 +120,16 @@ int main(int argc, char* argv[]) {
                 min_tag_combination_count = atoi(optarg);
                 break;
             case 't':
-                top = atof(optarg);
+                top = get_coordinate(optarg, 90.0);
                 break;
             case 'r':
-                right = atof(optarg);
+                right = get_coordinate(optarg, 180.0);
                 break;
             case 'b':
-                bottom = atof(optarg);
+                bottom = get_coordinate(optarg, 90.0);
                 break;
             case 'l':
-                left = atof(optarg);
+                left = get_coordinate(optarg, 180.0);
                 break;
             case 'w':
                 width = atoi(optarg);

@@ -30,6 +30,7 @@
 #include <osmium/util/memory.hpp>
 #include <osmium/util/verbose_output.hpp>
 
+#include <array>
 #include <cassert>
 #include <cstring>
 #include <iomanip>
@@ -271,7 +272,7 @@ void TagStatsHandler::print_actual_memory_usage() {
 KeyStats& TagStatsHandler::get_stat(const char* key) {
     const auto it = m_tags_stat.find(key);
     if (it == m_tags_stat.end()) {
-        const auto sit = m_tags_stat.emplace(std::make_pair(m_string_store.add(key), KeyStats{}));
+        const auto sit = m_tags_stat.emplace(m_string_store.add(key), KeyStats{});
         assert(sit.second);
         return sit.first->second;
     }
@@ -294,6 +295,7 @@ void TagStatsHandler::collect_tag_stats(const osmium::OSMObject& object) {
         const auto keyvalue = std::make_pair(tag.key(), tag.value());
 
         if (object.type() == osmium::item_type::node) {
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
             const auto location = m_map_to_int(static_cast<const osmium::Node&>(object).location());
             stat.distribution.add_coordinate(location);
             const auto gd_it = m_key_value_geodistribution.find(keyvalue);
@@ -301,6 +303,7 @@ void TagStatsHandler::collect_tag_stats(const osmium::OSMObject& object) {
                 gd_it->second.add_coordinate(location);
             }
         } else if (object.type() == osmium::item_type::way) {
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
             const auto& wnl = static_cast<const osmium::Way&>(object).nodes();
             if (!wnl.empty()) {
                 const auto gd_it = m_key_value_geodistribution.find(keyvalue);
@@ -489,9 +492,9 @@ void TagStatsHandler::write_to_database() {
     m_database.begin_transaction();
 
     struct tm* tm = gmtime(&m_max_timestamp);
-    static char max_timestamp_str[20]; // thats enough space for the timestamp generated from the pattern in the next line
-    strftime(max_timestamp_str, sizeof(max_timestamp_str), "%Y-%m-%d %H:%M:%S", tm);
-    statement_update_meta.bind_text(max_timestamp_str).execute();
+    static std::array<char, 20> max_timestamp_str; // thats enough space for the timestamp generated from the pattern in the next line
+    strftime(max_timestamp_str.begin(), max_timestamp_str.size(), "%Y-%m-%d %H:%M:%S", tm);
+    statement_update_meta.bind_text(max_timestamp_str.cbegin()).execute();
 
     uint64_t values_hash_size = 0;
     uint64_t values_hash_buckets = 0;
