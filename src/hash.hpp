@@ -9,23 +9,28 @@
  * key/value strings.
  */
 struct djb2_hash {
-    size_t operator()(const char *str) const noexcept {
-        size_t hash = 5381;
-        int c;
+
+    std::size_t calc(std::size_t hash, const char *str) const noexcept {
+        std::size_t c;
 
         while ((c = *str++)) {
-            hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+            hash = ((hash << 5U) + hash) + c; /* hash * 33 + c */
         }
 
         return hash;
     }
 
-    size_t operator()(std::pair<const char *, const char*> p) const {
-        std::string s{p.first};
-        s += '=';
-        s += p.second;
-        return operator()(s.c_str());
+    std::size_t operator()(const char *str) const noexcept {
+        return calc(5381U, str);
     }
+
+    std::size_t operator()(std::pair<const char *, const char*> p) const {
+        auto hash = calc(5381U, p.first);
+        hash = calc(hash, "=");
+        hash = calc(hash, p.second);
+        return hash;
+    }
+
 };
 
 /**
