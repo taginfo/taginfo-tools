@@ -36,6 +36,11 @@ jobs:
       env: CC='clang' CXX='clang++' BUILD_TYPE='Dev'
 
     - dist: focal
+      env: CC='clang' CXX='clang++' BUILD_TYPE='Dev'
+           CXXFLAGS="-fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer"
+           LDFLAGS="-fsanitize=address,undefined"
+
+    - dist: focal
       env: CC='clang' CXX='clang++' BUILD_TYPE='Release'
 
     # Linux GCC Builds
