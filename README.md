@@ -48,6 +48,8 @@ cmake ..
 make
 ```
 
+To run the tests, call `ctest`.
+
 ## Programs
 
 * `osmstats` - Create statistics from a planet or other OSM file (not used in taginfo)
