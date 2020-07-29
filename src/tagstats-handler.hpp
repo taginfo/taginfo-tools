@@ -1,5 +1,4 @@
-#ifndef TAGSTATS_HANDLER_HPP
-#define TAGSTATS_HANDLER_HPP
+#pragma once
 
 /*
 
@@ -116,13 +115,7 @@ public:
  * Holds some counter for nodes, ways, and relations.
  */
 struct Counter {
-    uint32_t count[3];
-
-    Counter() noexcept {
-        count[0] = 0; // nodes
-        count[1] = 0; // ways
-        count[2] = 0; // relations
-    }
+    uint32_t count[3] = {0, 0, 0};
 
     uint32_t nodes() const noexcept {
         return count[0];
@@ -167,14 +160,7 @@ public:
 
     GeoDistribution distribution;
 
-    KeyStats()
-        : key(),
-          values(),
-          cells(),
-          key_combination_hash(),
-          user_hash(),
-          values_hash(),
-          distribution() {
+    KeyStats() {
     }
 
     void update(const char* value, const osmium::OSMObject& object, StringStore& string_store) {
@@ -211,11 +197,15 @@ using key_hash_map_type = std::unordered_map<const char*, KeyStats, djb2_hash, e
  */
 class KeyValueStats {
 
-public:
-
     combination_hash_map_type m_key_value_combination_hash;
 
-    KeyValueStats() : m_key_value_combination_hash() {
+public:
+
+    KeyValueStats() {
+    }
+
+    const combination_hash_map_type& key_value_combination_hash() const noexcept {
+        return m_key_value_combination_hash;
     }
 
     void add_key_combination(const char* other_key, osmium::item_type type) {
@@ -235,8 +225,6 @@ struct RelationRoleStats {
 
 class RelationTypeStats {
 
-public:
-
     uint64_t m_count = 0;
     uint64_t m_node_members = 0;
     uint64_t m_way_members = 0;
@@ -244,7 +232,31 @@ public:
 
     std::map<std::string, RelationRoleStats> m_role_counts;
 
-    RelationTypeStats() = default;
+public:
+
+    uint64_t count() const noexcept {
+        return m_count;
+    }
+
+    uint64_t node_members() const noexcept {
+        return m_node_members;
+    }
+
+    uint64_t way_members() const noexcept {
+        return m_way_members;
+    }
+
+    uint64_t relation_members() const noexcept {
+        return m_relation_members;
+    }
+
+    uint64_t all_members() const noexcept {
+        return m_node_members + m_way_members + m_relation_members;
+    }
+
+    const std::map<std::string, RelationRoleStats>& role_counts() const noexcept {
+        return m_role_counts;
+    }
 
     void add(const osmium::Relation& relation) {
         ++m_count;
@@ -360,4 +372,3 @@ public:
 
 }; // class TagStatsHandler
 
-#endif // TAGSTATS_HANDLER_HPP

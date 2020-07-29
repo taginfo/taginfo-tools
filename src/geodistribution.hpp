@@ -1,5 +1,4 @@
-#ifndef TAGSTATS_GEODISTRIBUTION_HPP
-#define TAGSTATS_GEODISTRIBUTION_HPP
+#pragma once
 
 /*
 
@@ -64,12 +63,16 @@ public:
     }
 
     uint32_t operator()(const osmium::Location& p) const noexcept {
-        if (p.lon() < m_minx || p.lat() < m_miny || p.lon() >= m_maxx || p.lat() >= m_maxy) {
+        if (!p.valid() || p.lon_without_check() < m_minx
+                       || p.lat_without_check() < m_miny
+                       || p.lon_without_check() >= m_maxx
+                       || p.lat_without_check() >= m_maxy) {
             // if the position is out of bounds we return MAXINT
             return std::numeric_limits<uint32_t>::max();
         }
-        auto x = static_cast<int>((p.lon() - m_minx) / m_dx * m_width);
-        auto y = static_cast<int>((m_maxy - p.lat()) / m_dy * m_height);
+
+        auto x = static_cast<int>((p.lon_without_check() - m_minx) / m_dx * m_width);
+        auto y = static_cast<int>((m_maxy - p.lat_without_check()) / m_dy * m_height);
 
         if (x < 0) {
             x = 0;
@@ -157,7 +160,7 @@ public:
             ++m_cells;
             c_distribution_all[n] = true;
         } else if (m_cells == 1 && m_location != n) {
-            m_distribution.reset(new geo_distribution_type(c_width * c_height));
+            m_distribution = std::make_unique<geo_distribution_type>(c_width * c_height);
             m_distribution->operator[](m_location) = true;
             c_distribution_all[m_location] = true;
             m_distribution->operator[](n) = true;
@@ -188,6 +191,9 @@ public:
         Image(const Image&) = delete;
         Image& operator=(const Image&) = delete;
 
+        Image(Image&&) = delete;
+        Image& operator=(Image&&) = delete;
+
         ~Image() {
             gdImageDestroy(m_image);
         }
@@ -204,10 +210,10 @@ public:
 
     class Png {
 
-    public:
-
         int m_size = 0;
         void* m_data;
+
+    public:
 
         explicit Png(Image& image) :
             m_data(gdImagePngPtr(image.data(), &m_size)) {
@@ -283,4 +289,3 @@ public:
 
 }; // class GeoDistribution
 
-#endif // TAGSTATS_GEODISTRIBUTION_HPP

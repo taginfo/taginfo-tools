@@ -10,6 +10,8 @@ They used to "live" in the
 
 ## Prerequisites
 
+You need a C++14-compatible compiler.
+
 * [libgd](https://www.libgd.org/)
 * [libicu](https://icu-project.org/)
 * [libosmium](https://osmcode.org/libosmium) (>= 2.14.2)

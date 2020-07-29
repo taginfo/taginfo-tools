@@ -1,5 +1,5 @@
 ---
-Checks: '*,-cppcoreguidelines-avoid-c-arrays,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-constant-array-index,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-vararg,-hicpp-avoid-c-arrays,-hicpp-vararg,-fuchsia-*,-google-runtime-references,-hicpp-no-array-decay,-modernize-avoid-c-arrays,-readability-implicit-bool-conversion,-readability-magic-numbers'
+Checks: '*,-cppcoreguidelines-avoid-c-arrays,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-constant-array-index,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-vararg,-hicpp-avoid-c-arrays,-hicpp-vararg,-fuchsia-*,-google-runtime-references,-hicpp-no-array-decay,-llvm-header-guard,-modernize-avoid-c-arrays,-readability-implicit-bool-conversion,-readability-magic-numbers'
 #
 #  For a list of check options, see:
 #  https://clang.llvm.org/extra/clang-tidy/checks/list.html
@@ -29,8 +29,12 @@ Checks: '*,-cppcoreguidelines-avoid-c-arrays,-cppcoreguidelines-avoid-magic-numb
 #  google-runtime-references
 #    Different style.
 #
+#  llvm-header-guard
+#    We are using "#pragma once" instead
+#
 #  readability-implicit-bool-conversion
 #    I don't think this makes the code more readable.
 #
 #WarningsAsErrors: '*'
+HeaderFilterRegex: '\/src\/'
 ...

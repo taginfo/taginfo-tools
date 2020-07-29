@@ -1,5 +1,4 @@
-#ifndef TAGSTATS_STATISTICS_HANDLER_HPP
-#define TAGSTATS_STATISTICS_HANDLER_HPP
+#pragma once
 
 /*
 
@@ -27,6 +26,7 @@
 #include <osmium/handler.hpp>
 #include <osmium/osm.hpp>
 
+#include <array>
 #include <cstdint>
 
 /**
@@ -41,49 +41,6 @@ public:
         Handler(),
         m_stats(),
         m_database(database) {
-        // if you change anything in this array, also change the corresponding struct below
-        static const char *sn[] = {
-            "nodes",
-            "nodes_without_tags",
-            "node_tags",
-            "max_node_id",
-            "max_tags_on_node",
-            "ways",
-            "way_tags",
-            "way_nodes",
-            "way_nodes_consecutive",
-            "way_nodes_within_127",
-            "way_nodes_within_32767",
-            "max_way_id",
-            "max_tags_on_way",
-            "max_nodes_on_way",
-            "closed_ways",
-            "relations",
-            "relation_tags",
-            "relation_members",
-            "relation_member_nodes",
-            "relation_member_ways",
-            "relation_member_relations",
-            "max_relation_id",
-            "max_tags_on_relation",
-            "max_members_on_relation",
-            "max_user_id",
-            "anon_user_objects",
-            "max_node_version",
-            "max_way_version",
-            "max_relation_version",
-            "sum_node_version",
-            "sum_way_version",
-            "sum_relation_version",
-            "max_changeset_id",
-            nullptr    // last element (sentinel) must always be nullptr
-        };
-        m_stat_names = sn;
-
-        // initialize all statistics to zero
-        for (int i = 0; m_stat_names[i]; ++i) {
-            reinterpret_cast<uint64_t*>(&m_stats)[i] = 0;
-        }
     }
 
     void node(const osmium::Node& node) noexcept {
@@ -180,13 +137,53 @@ public:
         }
     }
 
+    static constexpr const std::size_t num_stats = 33;
+
     void write_to_database() {
+        // if you change anything in this array, also change the corresponding struct below
+        static constexpr const std::array<const char*, num_stats> stat_names = {
+            "nodes",
+            "nodes_without_tags",
+            "node_tags",
+            "max_node_id",
+            "max_tags_on_node",
+            "ways",
+            "way_tags",
+            "way_nodes",
+            "way_nodes_consecutive",
+            "way_nodes_within_127",
+            "way_nodes_within_32767",
+            "max_way_id",
+            "max_tags_on_way",
+            "max_nodes_on_way",
+            "closed_ways",
+            "relations",
+            "relation_tags",
+            "relation_members",
+            "relation_member_nodes",
+            "relation_member_ways",
+            "relation_member_relations",
+            "max_relation_id",
+            "max_tags_on_relation",
+            "max_members_on_relation",
+            "max_user_id",
+            "anon_user_objects",
+            "max_node_version",
+            "max_way_version",
+            "max_relation_version",
+            "sum_node_version",
+            "sum_way_version",
+            "sum_relation_version",
+            "max_changeset_id"
+        };
+
         Sqlite::Statement statement_insert_into_main_stats{m_database, "INSERT INTO stats (key, value) VALUES (?, ?);"};
         m_database.begin_transaction();
 
-        for (int i = 0; m_stat_names[i]; ++i) {
+        for (std::size_t i = 0; i < stat_names.size(); ++i) {
             statement_insert_into_main_stats
-                .bind_text(m_stat_names[i])
+                .bind_text(stat_names[i])
+                // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
                 .bind_int64(reinterpret_cast<uint64_t*>(&m_stats)[i])
                 .execute();
         }
@@ -202,42 +199,43 @@ private:
 
     // if you change anything in this struct, also change the corresponding array above
     struct statistics {
-        uint64_t nodes;
-        uint64_t nodes_without_tags;
-        uint64_t node_tags;
-        uint64_t max_node_id;
-        uint64_t max_tags_on_node;
-        uint64_t ways;
-        uint64_t way_tags;
-        uint64_t way_nodes;
-        uint64_t way_nodes_consecutive;
-        uint64_t way_nodes_within_127;
-        uint64_t way_nodes_within_32767;
-        uint64_t max_way_id;
-        uint64_t max_tags_on_way;
-        uint64_t max_nodes_on_way;
-        uint64_t closed_ways;
-        uint64_t relations;
-        uint64_t relation_tags;
-        uint64_t relation_members;
-        uint64_t relation_member_nodes;
-        uint64_t relation_member_ways;
-        uint64_t relation_member_relations;
-        uint64_t max_relation_id;
-        uint64_t max_tags_on_relation;
-        uint64_t max_members_on_relation;
-        uint64_t max_user_id;
-        uint64_t anon_user_objects;
-        uint64_t max_node_version;
-        uint64_t max_way_version;
-        uint64_t max_relation_version;
-        uint64_t sum_node_version;
-        uint64_t sum_way_version;
-        uint64_t sum_relation_version;
-        uint64_t max_changeset_id;
+        uint64_t nodes = 0;
+        uint64_t nodes_without_tags = 0;
+        uint64_t node_tags = 0;
+        uint64_t max_node_id = 0;
+        uint64_t max_tags_on_node = 0;
+        uint64_t ways = 0;
+        uint64_t way_tags = 0;
+        uint64_t way_nodes = 0;
+        uint64_t way_nodes_consecutive = 0;
+        uint64_t way_nodes_within_127 = 0;
+        uint64_t way_nodes_within_32767 = 0;
+        uint64_t max_way_id = 0;
+        uint64_t max_tags_on_way = 0;
+        uint64_t max_nodes_on_way = 0;
+        uint64_t closed_ways = 0;
+        uint64_t relations = 0;
+        uint64_t relation_tags = 0;
+        uint64_t relation_members = 0;
+        uint64_t relation_member_nodes = 0;
+        uint64_t relation_member_ways = 0;
+        uint64_t relation_member_relations = 0;
+        uint64_t max_relation_id = 0;
+        uint64_t max_tags_on_relation = 0;
+        uint64_t max_members_on_relation = 0;
+        uint64_t max_user_id = 0;
+        uint64_t anon_user_objects = 0;
+        uint64_t max_node_version = 0;
+        uint64_t max_way_version = 0;
+        uint64_t max_relation_version = 0;
+        uint64_t sum_node_version = 0;
+        uint64_t sum_way_version = 0;
+        uint64_t sum_relation_version = 0;
+        uint64_t max_changeset_id = 0;
     } m_stats;
 
-    const char **m_stat_names = nullptr;
+    static_assert(sizeof(statistics) == sizeof(uint64_t) * num_stats,
+                  "Size mismatch between struct statistics and stat_names array");
 
     Sqlite::Database& m_database;
 
@@ -266,4 +264,3 @@ private:
 
 }; // class StatisticsHandler
 
-#endif // TAGSTATS_STATISTICS_HANDLER_HPP

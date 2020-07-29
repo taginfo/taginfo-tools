@@ -559,7 +559,7 @@ void TagStatsHandler::write_to_database() {
     for (const auto& key_value_stat : m_key_value_stats) {
         const KeyValueStats& stat = key_value_stat.second;
         const auto sr1 = split_key_value(key_value_stat.first);
-        for (const auto& key_value_combo_stat : stat.m_key_value_combination_hash) {
+        for (const auto& key_value_combo_stat : stat.key_value_combination_hash()) {
             if (key_value_combo_stat.second.all() >= m_min_tag_combination_count) {
                 const auto sr2 = split_key_value(key_value_combo_stat.first);
                 statement_insert_into_tag_combinations
@@ -579,15 +579,15 @@ void TagStatsHandler::write_to_database() {
     for (const auto& rtype_stats : m_relation_type_stats) {
         const RelationTypeStats& r = rtype_stats.second;
         statement_insert_into_relation_types
-            .bind_text(rtype_stats.first)        // column: rtype
-            .bind_int64(r.m_count)               // column: count
-            .bind_int64(r.m_node_members + r.m_way_members + r.m_relation_members)  // column: members_all
-            .bind_int64(r.m_node_members)        // columns: members_nodes
-            .bind_int64(r.m_way_members)         // columns: members_ways
-            .bind_int64(r.m_relation_members)    // columns: members_relations
+            .bind_text(rtype_stats.first)     // column: rtype
+            .bind_int64(r.count())            // column: count
+            .bind_int64(r.all_members())      // column: members_all
+            .bind_int64(r.node_members())     // columns: members_nodes
+            .bind_int64(r.way_members())      // columns: members_ways
+            .bind_int64(r.relation_members()) // columns: members_relations
             .execute();
 
-        for (const auto& role_stats : r.m_role_counts) {
+        for (const auto& role_stats : r.role_counts()) {
             const RelationRoleStats& rstats = role_stats.second;
             statement_insert_into_relation_roles
                 .bind_text(rtype_stats.first)    // column: rtype
