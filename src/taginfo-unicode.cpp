@@ -25,14 +25,12 @@
 #include <unicode/uchar.h>
 #include <unicode/unistr.h>
 
+#include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <iostream>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <vector>
 
 static const char* category_to_string(int8_t category) noexcept {
@@ -79,30 +77,24 @@ static const char* category_to_string(int8_t category) noexcept {
     }
 }
 
-static void get_unicode_info(const char* text, const icu::UnicodeString& us, Sqlite::Statement& insert) {
-    bool allokay = true;
-    for (const char* t = text; *t; ++t) {
+static bool is_plain(const char* t) noexcept {
+    for (; *t; ++t) {
         if (!(std::isalnum(*t) || *t == '_' || *t == ':' || *t == ' ' || *t == '.' || *t == '-')) {
-            allokay = false;
-            break;
+            return false;
         }
     }
+    return true;
+}
 
-    if (allokay) {
-        return;
-    }
-
-    bool unusual = false;
-    for (icu::StringCharacterIterator it(us); it.hasNext(); it.next()) {
-        UChar32 codepoint = it.current32();
+static bool is_unusual(const icu::UnicodeString& us) {
+    for (icu::StringCharacterIterator it{us}; it.hasNext(); it.next()) {
+        const UChar32 codepoint = it.current32();
         const int8_t chartype = u_charType(codepoint);
         if (! u_isprint(codepoint)) {
-            unusual = true;
-            break;
+            return true;
         }
         if (u_charDirection(codepoint) != 0) {
-            unusual = true;
-            break;
+            return true;
         }
         if (chartype !=  1 && // UPPERCASE_LETTER
             chartype !=  2 && // LOWERCASE_LETTER
@@ -111,49 +103,58 @@ static void get_unicode_info(const char* text, const icu::UnicodeString& us, Sql
             chartype != 19 && // DASH_PUNCTUATION
             chartype != 22 && // CONNECTOR_PUNCTUATION
             chartype != 23) { // OTHER_PUNCTUATION
-            unusual = true;
-            break;
+            return true;
         }
     }
+    return false;
+}
 
-    if (unusual) {
-        int num = 0;
-        for (icu::StringCharacterIterator it(us); it.hasNext(); it.next(), ++num) {
-            UChar32 codepoint = it.current32();
+static void get_unicode_info(const char* text, Sqlite::Statement& insert) {
+    if (is_plain(text)) {
+        return;
+    }
 
-            const int8_t chartype = u_charType(codepoint);
+    const auto us = icu::UnicodeString::fromUTF8(text);
+    if (!is_unusual(us)) {
+        return;
+    }
 
-            char buffer[100];
-            UErrorCode errorCode = U_ZERO_ERROR;
-            u_charName(codepoint, U_UNICODE_CHAR_NAME, buffer, sizeof(buffer), &errorCode);
+    int num = 0;
+    for (icu::StringCharacterIterator it{us}; it.hasNext(); it.next(), ++num) {
+        const UChar32 codepoint = it.current32();
 
-            UCharDirection direction = u_charDirection(codepoint);
-            const int32_t block = u_getIntPropertyValue(codepoint, UCHAR_BLOCK);
+        const int8_t chartype = u_charType(codepoint);
 
-            icu::UnicodeString ustr(codepoint);
-            std::string str;
-            ustr.toUTF8String(str);
+        std::array<char, 100> buffer{};
+        UErrorCode errorCode = U_ZERO_ERROR;
+        u_charName(codepoint, U_UNICODE_CHAR_NAME, buffer.begin(), buffer.size(), &errorCode);
 
-            char uplus[10];
-            snprintf(uplus, 10, "U+%04x", codepoint);
+        UCharDirection direction = u_charDirection(codepoint);
+        const int32_t block = u_getIntPropertyValue(codepoint, UCHAR_BLOCK);
 
-            insert.
-                bind_text(text).
-                bind_int(num).
-                bind_text(str.c_str()).
-                bind_text(uplus).
-                bind_int(block).
-                bind_text(category_to_string(chartype)).
-                bind_int(direction).
-                bind_text(buffer).
-                execute();
-        }
+        icu::UnicodeString ustr{codepoint};
+        std::string str;
+        ustr.toUTF8String(str);
+
+        std::array<char, 10> uplus{};
+        snprintf(uplus.begin(), uplus.size(), "U+%04x", codepoint);
+
+        insert.
+            bind_text(text).
+            bind_int(num).
+            bind_text(str.c_str()).
+            bind_text(uplus.cbegin()).
+            bind_int(block).
+            bind_text(category_to_string(chartype)).
+            bind_int(direction).
+            bind_text(buffer.cbegin()).
+            execute();
     }
 }
 
 static void find_unicode_info(const char* begin, const char* end, Sqlite::Statement& insert) {
     for (; begin != end; begin += std::strlen(begin) + 1) {
-        get_unicode_info(begin, icu::UnicodeString::fromUTF8(begin), insert);
+        get_unicode_info(begin, insert);
     }
 }
 
@@ -163,20 +164,25 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    std::string data;
+    try {
+        std::string data;
 
-    Sqlite::Database db{argv[1], SQLITE_OPEN_READWRITE};
-    Sqlite::Statement select{db, "SELECT key FROM keys WHERE characters IS NULL OR characters NOT IN ('plain', 'colon') ORDER BY key"};
-    while (select.read()) {
-        data += select.get_text_ptr(0);
-        data += '\0';
+        Sqlite::Database db{argv[1], SQLITE_OPEN_READWRITE};
+        Sqlite::Statement select{db, "SELECT key FROM keys WHERE characters IS NULL OR characters NOT IN ('plain', 'colon') ORDER BY key"};
+        while (select.read()) {
+            data += select.get_text_ptr(0);
+            data += '\0';
+        }
+
+
+        Sqlite::Statement insert{db, "INSERT INTO key_characters (key, num, utf8, codepoint, block, category, direction, name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"};
+        db.begin_transaction();
+        find_unicode_info(data.c_str(), data.c_str() + data.size(), insert);
+        db.commit();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 2;
     }
-
-
-    Sqlite::Statement insert{db, "INSERT INTO key_characters (key, num, utf8, codepoint, block, category, direction, name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"};
-    db.begin_transaction();
-    find_unicode_info(data.c_str(), data.c_str() + data.size(), insert);
-    db.commit();
 
     return 0;
 }
