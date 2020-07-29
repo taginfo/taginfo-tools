@@ -29,6 +29,7 @@
 #include <osmium/handler.hpp>
 #include <osmium/index/map/dense_mem_array.hpp>
 #include <osmium/index/map/dense_mmap_array.hpp>
+#include <osmium/index/map/flex_mem.hpp>
 #include <osmium/index/map/sparse_mem_array.hpp>
 #include <osmium/index/map/sparse_mmap_array.hpp>
 #include <osmium/util/memory.hpp>
@@ -61,6 +62,7 @@ class LocationIndex {
 
     template <typename T>
     static std::unique_ptr<map_type<T>> create_map(const std::string& location_index_type) {
+        osmium::index::register_map<osmium::unsigned_object_id_type, T, osmium::index::map::DenseMemArray>("FlexMem");
         osmium::index::register_map<osmium::unsigned_object_id_type, T, osmium::index::map::DenseMemArray>("DenseMemArray");
         osmium::index::register_map<osmium::unsigned_object_id_type, T, osmium::index::map::SparseMemArray>("SparseMemArray");
 #ifdef __linux__

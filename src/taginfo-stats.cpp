@@ -34,12 +34,6 @@
 
 #include <string>
 
-#ifdef __linux__
-static const char* default_index_type = "SparseMmapArray";
-#else
-static const char* default_index_type = "SparseMemArray";
-#endif
-
 GeoDistribution::geo_distribution_type GeoDistribution::c_distribution_all;
 int GeoDistribution::c_width;
 int GeoDistribution::c_height;
@@ -50,7 +44,7 @@ static void print_help() {
               << "from OSMFILE and puts them into DATABASE (an SQLite database).\n" \
               << "\nOptions:\n" \
               << "  -H, --help                    Print this help message and exit\n" \
-              << "  -i, --index=INDEX_TYPE        Set index type for location index (default: " << default_index_type << ")\n" \
+              << "  -i, --index=INDEX_TYPE        Set index type for location index (default: FlexMem)\n" \
               << "  -I, --show-index-types        Show available index types for location index\n" \
               << "  -m, --min-tag-combination-count=N  Tag combinations not appearing this often\n" \
               << "                                     are not written to database\n" \
@@ -84,7 +78,7 @@ int main(int argc, char* argv[]) {
 
     std::string selection_database_name;
 
-    std::string index_type_name = default_index_type;
+    std::string index_type_name{"FlexMem"};
 
     double top    =   90.0;
     double right  =  180.0;
@@ -109,6 +103,7 @@ int main(int argc, char* argv[]) {
                 break;
             case 'I':
                 std::cout << "Available index types:\n";
+                std::cout << "  FlexMem (default)\n";
                 std::cout << "  DenseMemArray\n";
                 std::cout << "  SparseMemArray\n";
 #ifdef __linux__
