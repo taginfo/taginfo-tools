@@ -166,7 +166,7 @@ int main(int argc, char *argv[]) {
     std::string data;
 
     Sqlite::Database db{argv[1], SQLITE_OPEN_READWRITE};
-    Sqlite::Statement select{db, "SELECT key FROM keys WHERE characters NOT IN ('plain', 'colon') ORDER BY key"};
+    Sqlite::Statement select{db, "SELECT key FROM keys WHERE characters IS NULL OR characters NOT IN ('plain', 'colon') ORDER BY key"};
     while (select.read()) {
         data += select.get_text_ptr(0);
         data += '\0';

@@ -1,0 +1,5 @@
+n10 v1 dV x1.0 y1.0 Tamenity=post_box
+n11 v2 dV x1.0 y1.0 Taddr:city=Paris
+n12 v1 dV x1.0 y1.0 Tspace%20%in%20%key=foo
+n13 v1 dV x1.0 y1.0 Ta%2764%b=foo
+n14 v1 dV x1.0 y1.0 Ta%29d8%b=foo
