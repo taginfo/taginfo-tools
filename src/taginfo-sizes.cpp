@@ -26,7 +26,7 @@
 #include <iostream>
 
 int main() {
-    std::cout << "sizeof(Counter)................................ = " << sizeof(Counter) << '\n';
+    std::cout << "sizeof(Counter32).............................. = " << sizeof(Counter32) << '\n';
     std::cout << "sizeof(GeoDistribution)........................ = " << sizeof(GeoDistribution) << '\n';
     std::cout << "sizeof(KeyStats)............................... = " << sizeof(KeyStats) << '\n';
     std::cout << "sizeof(KeyValueStats).......................... = " << sizeof(KeyValueStats) << '\n';

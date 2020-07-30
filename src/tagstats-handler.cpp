@@ -208,11 +208,8 @@ void TagStatsHandler::print_and_clear_key_distribution_images(bool for_nodes) {
     for (auto& p : m_tags_stat) {
         KeyStats& stat = p.second;
 
-        if (for_nodes) {
-            stat.cells.count[0] = stat.distribution.cells();
-        } else {
-            stat.cells.count[1] = stat.distribution.cells();
-        }
+        const auto type = for_nodes ? osmium::item_type::node : osmium::item_type::way;
+        stat.cells.set_count(type, stat.distribution.cells());
 
         const auto png = stat.distribution.create_png();
         sum_size += png.size();
@@ -579,23 +576,23 @@ void TagStatsHandler::write_to_database() {
     for (const auto& rtype_stats : m_relation_type_stats) {
         const RelationTypeStats& r = rtype_stats.second;
         statement_insert_into_relation_types
-            .bind_text(rtype_stats.first)     // column: rtype
-            .bind_int64(r.count())            // column: count
-            .bind_int64(r.all_members())      // column: members_all
-            .bind_int64(r.node_members())     // columns: members_nodes
-            .bind_int64(r.way_members())      // columns: members_ways
-            .bind_int64(r.relation_members()) // columns: members_relations
+            .bind_text(rtype_stats.first)        // column: rtype
+            .bind_int64(r.count())               // column: count
+            .bind_int64(r.members().all())       // column: members_all
+            .bind_int64(r.members().nodes())     // column: members_nodes
+            .bind_int64(r.members().ways())      // column: members_ways
+            .bind_int64(r.members().relations()) // column: members_relations
             .execute();
 
         for (const auto& role_stats : r.role_counts()) {
-            const RelationRoleStats& rstats = role_stats.second;
+            const auto& rstats = role_stats.second;
             statement_insert_into_relation_roles
-                .bind_text(rtype_stats.first)    // column: rtype
-                .bind_text(role_stats.first)     // column: role
-                .bind_int64(rstats.node + rstats.way + rstats.relation)  // column: count_all
-                .bind_int64(rstats.node)         // column: count_nodes
-                .bind_int64(rstats.way)          // column: count_ways
-                .bind_int64(rstats.relation)     // column: count_relations
+                .bind_text(rtype_stats.first)   // column: rtype
+                .bind_text(role_stats.first)    // column: role
+                .bind_int64(rstats.all())       // column: count_all
+                .bind_int64(rstats.nodes())     // column: count_nodes
+                .bind_int64(rstats.ways())      // column: count_ways
+                .bind_int64(rstats.relations()) // column: count_relations
                 .execute();
         }
     }
@@ -619,10 +616,10 @@ void TagStatsHandler::write_to_database() {
     total += show_std_map_memory_usage(m_vout, m_relation_type_stats);
 
     m_vout << "  values: .................. ";
-    total += show_sparsehash_map_memory_usage<const char*, Counter>(m_vout, values_hash_size, values_hash_buckets);
+    total += show_sparsehash_map_memory_usage<const char*, Counter32>(m_vout, values_hash_size, values_hash_buckets);
 
     m_vout << "  key_combos: .............. ";
-    total += show_sparsehash_map_memory_usage<const char*, Counter>(m_vout, key_combination_hash_size, key_combination_hash_buckets);
+    total += show_sparsehash_map_memory_usage<const char*, Counter32>(m_vout, key_combination_hash_size, key_combination_hash_buckets);
 
     m_vout << "  users: ................... ";
     total += show_sparsehash_map_memory_usage<osmium::user_id_type, uint32_t>(m_vout, user_hash_size, user_hash_buckets);

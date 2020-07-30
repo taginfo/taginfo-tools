@@ -32,6 +32,7 @@
 #include <osmium/index/map/flex_mem.hpp>
 #include <osmium/index/map/sparse_mem_array.hpp>
 #include <osmium/index/map/sparse_mmap_array.hpp>
+#include <osmium/index/nwr_array.hpp>
 #include <osmium/util/memory.hpp>
 #include <osmium/util/verbose_output.hpp>
 
@@ -116,32 +117,51 @@ public:
 /**
  * Holds some counter for nodes, ways, and relations.
  */
-struct Counter {
-    uint32_t count[3] = {0, 0, 0};
+template <typename T>
+class Counter {
 
-    uint32_t nodes() const noexcept {
-        return count[0];
+    osmium::nwr_array<T> m_count;
+
+public:
+
+    T count(osmium::item_type type) const noexcept {
+        return m_count(type);
     }
 
-    uint32_t ways() const noexcept {
-        return count[1];
+    void set_count(osmium::item_type type, T value) noexcept {
+        m_count(type) = value;
     }
 
-    uint32_t relations() const noexcept {
-        return count[2];
+    void incr(osmium::item_type type) noexcept {
+        ++m_count(type);
     }
 
-    uint32_t all() const noexcept {
-        return count[0] + count[1] + count[2];
+    T nodes() const noexcept {
+        return m_count(osmium::item_type::node);
+    }
+
+    T ways() const noexcept {
+        return m_count(osmium::item_type::way);
+    }
+
+    T relations() const noexcept {
+        return m_count(osmium::item_type::relation);
+    }
+
+    T all() const noexcept {
+        return nodes() + ways() + relations();
     }
 
 }; // struct Counter
 
-using value_hash_map_type = google::sparse_hash_map<const char*, Counter, djb2_hash, eqstr>;
+using Counter32 = Counter<uint32_t>;
+using Counter64 = Counter<uint32_t>;
+
+using value_hash_map_type = google::sparse_hash_map<const char*, Counter32, djb2_hash, eqstr>;
 
 using user_hash_map_type = google::sparse_hash_map<osmium::user_id_type, uint32_t>;
 
-using combination_hash_map_type = google::sparse_hash_map<const char*, Counter, djb2_hash, eqstr>;
+using combination_hash_map_type = google::sparse_hash_map<const char*, Counter32, djb2_hash, eqstr>;
 
 /**
  * A KeyStats object holds all statistics for an OSM tag key.
@@ -150,9 +170,9 @@ class KeyStats {
 
 public:
 
-    Counter key;
-    Counter values;
-    Counter cells;
+    Counter32 key;
+    Counter32 values;
+    Counter32 cells;
 
     combination_hash_map_type key_combination_hash;
 
@@ -166,20 +186,20 @@ public:
     }
 
     void update(const char* value, const osmium::OSMObject& object, StringStore& string_store) {
-        const int type = osmium::item_type_to_nwr_index(object.type());
+        const auto type = object.type();
 
-        key.count[type]++;
+        key.incr(type);
 
         const auto values_iterator = values_hash.find(value);
         if (values_iterator == values_hash.end()) {
-            Counter counter;
-            counter.count[type] = 1;
-            values_hash.insert(std::pair<const char*, Counter>(string_store.add(value), counter));
-            values.count[type]++;
+            Counter32 counter;
+            counter.incr(type);
+            values_hash.insert(std::pair<const char*, Counter32>(string_store.add(value), counter));
+            values.incr(type);
         } else {
-            values_iterator->second.count[type]++;
-            if (values_iterator->second.count[type] == 1) {
-                values.count[type]++;
+            values_iterator->second.incr(type);
+            if (values_iterator->second.count(type) == 1) {
+                values.incr(type);
             }
         }
 
@@ -187,7 +207,7 @@ public:
     }
 
     void add_key_combination(const char* other_key, osmium::item_type type) {
-        key_combination_hash[other_key].count[osmium::item_type_to_nwr_index(type)]++;
+        key_combination_hash[other_key].incr(type);
     }
 
 }; // class KeyStats
@@ -211,7 +231,7 @@ public:
     }
 
     void add_key_combination(const char* other_key, osmium::item_type type) {
-        m_key_value_combination_hash[other_key].count[osmium::item_type_to_nwr_index(type)]++;
+        m_key_value_combination_hash[other_key].incr(type);
     }
 
 }; // class KeyValueStats
@@ -219,20 +239,12 @@ public:
 using key_value_hash_map_type = std::unordered_map<const char*, KeyValueStats, djb2_hash, eqstr>;
 using key_value_geodistribution_hash_map_type = std::unordered_map<std::pair<const char*, const char*>, GeoDistribution, djb2_hash, eqstr>;
 
-struct RelationRoleStats {
-    uint32_t node;
-    uint32_t way;
-    uint32_t relation;
-};
-
 class RelationTypeStats {
 
     uint64_t m_count = 0;
-    uint64_t m_node_members = 0;
-    uint64_t m_way_members = 0;
-    uint64_t m_relation_members = 0;
+    Counter64 m_members;
 
-    std::map<std::string, RelationRoleStats> m_role_counts;
+    std::map<std::string, Counter32> m_role_counts;
 
 public:
 
@@ -240,23 +252,11 @@ public:
         return m_count;
     }
 
-    uint64_t node_members() const noexcept {
-        return m_node_members;
+    Counter64 members() const noexcept {
+        return m_members;
     }
 
-    uint64_t way_members() const noexcept {
-        return m_way_members;
-    }
-
-    uint64_t relation_members() const noexcept {
-        return m_relation_members;
-    }
-
-    uint64_t all_members() const noexcept {
-        return m_node_members + m_way_members + m_relation_members;
-    }
-
-    const std::map<std::string, RelationRoleStats>& role_counts() const noexcept {
+    const std::map<std::string, Counter32>& role_counts() const noexcept {
         return m_role_counts;
     }
 
@@ -264,23 +264,8 @@ public:
         ++m_count;
 
         for (const auto& member : relation.members()) {
-            RelationRoleStats& r = m_role_counts[member.role()];
-            switch (member.type()) {
-                case osmium::item_type::node:
-                    ++r.node;
-                    ++m_node_members;
-                    break;
-                case osmium::item_type::way:
-                    ++r.way;
-                    ++m_way_members;
-                    break;
-                case osmium::item_type::relation:
-                    ++r.relation;
-                    ++m_relation_members;
-                    break;
-                default:
-                    break;
-            }
+            m_role_counts[member.role()].incr(member.type());
+            m_members.incr(member.type());
         }
     }
 
