@@ -327,9 +327,9 @@ class TagStatsHandler : public osmium::handler::Handler {
                                             osmium::TagList::const_iterator it,
                                             osmium::TagList::const_iterator end);
 
-    void print_and_clear_key_distribution_images(bool for_nodes);
+    void print_and_clear_key_distribution_images(osmium::item_type type);
 
-    void print_and_clear_tag_distribution_images(bool for_nodes);
+    void print_and_clear_tag_distribution_images(osmium::item_type type);
 
     void print_actual_memory_usage();
 

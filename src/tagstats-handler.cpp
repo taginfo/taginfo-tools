@@ -197,7 +197,7 @@ void TagStatsHandler::update_key_value_combination_hash(osmium::item_type type,
     }
 }
 
-void TagStatsHandler::print_and_clear_key_distribution_images(bool for_nodes) {
+void TagStatsHandler::print_and_clear_key_distribution_images(osmium::item_type type) {
     uint64_t sum_size = 0;
 
     Sqlite::Statement statement_insert_into_key_distributions{m_database,
@@ -205,10 +205,10 @@ void TagStatsHandler::print_and_clear_key_distribution_images(bool for_nodes) {
 
     m_database.begin_transaction();
 
+    const std::array<char, 2> object_type = { osmium::item_type_to_char(type), '\0' };
     for (auto& p : m_tags_stat) {
         KeyStats& stat = p.second;
 
-        const auto type = for_nodes ? osmium::item_type::node : osmium::item_type::way;
         stat.cells.set_count(type, stat.distribution.cells());
 
         const auto png = stat.distribution.create_png();
@@ -216,7 +216,7 @@ void TagStatsHandler::print_and_clear_key_distribution_images(bool for_nodes) {
 
         statement_insert_into_key_distributions
             .bind_text(p.first)                // column: key
-            .bind_text(for_nodes ? "n" : "w")  // column: object_type
+            .bind_text(object_type.begin())    // column: object_type
             .bind_blob(png.data(), png.size()) // column: png
             .execute();
 
@@ -229,13 +229,14 @@ void TagStatsHandler::print_and_clear_key_distribution_images(bool for_nodes) {
     m_database.commit();
 }
 
-void TagStatsHandler::print_and_clear_tag_distribution_images(bool for_nodes) {
+void TagStatsHandler::print_and_clear_tag_distribution_images(osmium::item_type type) {
     uint64_t sum_size = 0;
 
     Sqlite::Statement statement_insert_into_tag_distributions{m_database,
         "INSERT INTO tag_distributions (key, value, object_type, png) VALUES (?, ?, ?, ?);"};
     m_database.begin_transaction();
 
+    const std::array<char, 2> object_type = { osmium::item_type_to_char(type), '\0' };
     for (auto& geodist : m_key_value_geodistribution) {
         GeoDistribution& geo = geodist.second;
 
@@ -245,11 +246,11 @@ void TagStatsHandler::print_and_clear_tag_distribution_images(bool for_nodes) {
         statement_insert_into_tag_distributions
             .bind_text(geodist.first.first)    // column: key
             .bind_text(geodist.first.second)   // column: value
-            .bind_text(for_nodes ? "n" : "w")  // column: object_type
+            .bind_text(object_type.begin())    // column: object_type
             .bind_blob(png.data(), png.size()) // column: png
             .execute();
 
-        if (for_nodes) {
+        if (type == osmium::item_type::node) {
             geo.clear();
         }
     }
@@ -428,8 +429,8 @@ void TagStatsHandler::before_ways() {
         .execute();
     m_database.commit();
 
-    print_and_clear_key_distribution_images(true);
-    print_and_clear_tag_distribution_images(true);
+    print_and_clear_key_distribution_images(osmium::item_type::node);
+    print_and_clear_tag_distribution_images(osmium::item_type::node);
     timer_info("dumping images");
 
     print_actual_memory_usage();
@@ -441,8 +442,8 @@ void TagStatsHandler::before_ways() {
 void TagStatsHandler::before_relations() {
     timer_info("processing ways");
 
-    print_and_clear_key_distribution_images(false);
-    print_and_clear_tag_distribution_images(false);
+    print_and_clear_key_distribution_images(osmium::item_type::way);
+    print_and_clear_tag_distribution_images(osmium::item_type::way);
     timer_info("dumping images");
 
     print_actual_memory_usage();
