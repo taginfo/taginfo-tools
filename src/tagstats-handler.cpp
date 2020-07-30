@@ -209,9 +209,9 @@ void TagStatsHandler::print_and_clear_key_distribution_images(osmium::item_type 
     for (auto& p : m_tags_stat) {
         KeyStats& stat = p.second;
 
-        stat.cells.set_count(type, stat.distribution.cells());
+        stat.set_cells_count(type, stat.distribution().cells());
 
-        const auto png = stat.distribution.create_png();
+        const auto png = stat.distribution().create_png();
         sum_size += png.size();
 
         statement_insert_into_key_distributions
@@ -220,7 +220,7 @@ void TagStatsHandler::print_and_clear_key_distribution_images(osmium::item_type 
             .bind_blob(png.data(), png.size()) // column: png
             .execute();
 
-        stat.distribution.clear();
+        stat.distribution().clear();
     }
 
     m_vout << "gridcells_all: " << GeoDistribution::count_all_set_cells() << "\n";
@@ -296,7 +296,7 @@ void TagStatsHandler::collect_tag_stats(const osmium::OSMObject& object) {
         if (object.type() == osmium::item_type::node) {
             // NOLINTNEXTLINE(cppcoreguidelines-pro-type-static-cast-downcast)
             const auto location = m_map_to_int(static_cast<const osmium::Node&>(object).location());
-            stat.distribution.add_coordinate(location);
+            stat.distribution().add_coordinate(location);
             const auto gd_it = m_key_value_geodistribution.find(keyvalue);
             if (gd_it != m_key_value_geodistribution.end()) {
                 gd_it->second.add_coordinate(location);
@@ -309,7 +309,7 @@ void TagStatsHandler::collect_tag_stats(const osmium::OSMObject& object) {
                 for (const auto& wn : wnl) {
                     try {
                         const auto location = m_location_index.get(wn.positive_ref());
-                        stat.distribution.add_coordinate(location);
+                        stat.distribution().add_coordinate(location);
                         if (gd_it != m_key_value_geodistribution.end()) {
                             gd_it->second.add_coordinate(location);
                         }
@@ -507,10 +507,10 @@ void TagStatsHandler::write_to_database() {
     for (const auto& key_stat : m_tags_stat) {
         const KeyStats& stat = key_stat.second;
 
-        values_hash_size    += stat.values_hash.size();
-        values_hash_buckets += stat.values_hash.bucket_count();
+        values_hash_size    += stat.values_hash().size();
+        values_hash_buckets += stat.values_hash().bucket_count();
 
-        for (const auto& value_stat : stat.values_hash) {
+        for (const auto& value_stat : stat.values_hash()) {
             statement_insert_into_tags
                 .bind_text(key_stat.first)                 // column: key
                 .bind_text(value_stat.first)               // column: value
@@ -521,28 +521,28 @@ void TagStatsHandler::write_to_database() {
                 .execute();
         }
 
-        user_hash_size    += stat.user_hash.size();
-        user_hash_buckets += stat.user_hash.bucket_count();
+        user_hash_size    += stat.user_hash().size();
+        user_hash_buckets += stat.user_hash().bucket_count();
 
         statement_insert_into_keys
-            .bind_text(key_stat.first)           // column: key
-            .bind_int64(stat.key.all())          // column: count_all
-            .bind_int64(stat.key.nodes())        // column: count_nodes
-            .bind_int64(stat.key.ways())         // column: count_ways
-            .bind_int64(stat.key.relations())    // column: count_relations
-            .bind_int64(stat.values_hash.size()) // column: values_all
-            .bind_int64(stat.values.nodes())     // column: values_nodes
-            .bind_int64(stat.values.ways())      // column: values_ways
-            .bind_int64(stat.values.relations()) // column: values_relations
-            .bind_int64(stat.user_hash.size())   // column: users_all
-            .bind_int64(stat.cells.nodes())      // column: cells_nodes
-            .bind_int64(stat.cells.ways())       // column: cells_ways
+            .bind_text(key_stat.first)             // column: key
+            .bind_int64(stat.key().all())          // column: count_all
+            .bind_int64(stat.key().nodes())        // column: count_nodes
+            .bind_int64(stat.key().ways())         // column: count_ways
+            .bind_int64(stat.key().relations())    // column: count_relations
+            .bind_int64(stat.values_hash().size()) // column: values_all
+            .bind_int64(stat.values().nodes())     // column: values_nodes
+            .bind_int64(stat.values().ways())      // column: values_ways
+            .bind_int64(stat.values().relations()) // column: values_relations
+            .bind_int64(stat.user_hash().size())   // column: users_all
+            .bind_int64(stat.cells().nodes())      // column: cells_nodes
+            .bind_int64(stat.cells().ways())       // column: cells_ways
             .execute();
 
-        key_combination_hash_size    += stat.key_combination_hash.size();
-        key_combination_hash_buckets += stat.key_combination_hash.bucket_count();
+        key_combination_hash_size    += stat.key_combination_hash().size();
+        key_combination_hash_buckets += stat.key_combination_hash().bucket_count();
 
-        for (const auto& key_combo_stat : stat.key_combination_hash) {
+        for (const auto& key_combo_stat : stat.key_combination_hash()) {
             statement_insert_into_key_combinations
                 .bind_text(key_stat.first)                     // column: key1
                 .bind_text(key_combo_stat.first)               // column: key2

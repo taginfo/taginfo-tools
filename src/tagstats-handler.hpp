@@ -168,46 +168,81 @@ using combination_hash_map_type = google::sparse_hash_map<const char*, Counter32
  */
 class KeyStats {
 
+    Counter32 m_key;
+    Counter32 m_values;
+    Counter32 m_cells;
+
+    combination_hash_map_type m_key_combination_hash;
+
+    user_hash_map_type m_user_hash;
+
+    value_hash_map_type m_values_hash;
+
+    GeoDistribution m_distribution;
+
 public:
-
-    Counter32 key;
-    Counter32 values;
-    Counter32 cells;
-
-    combination_hash_map_type key_combination_hash;
-
-    user_hash_map_type user_hash;
-
-    value_hash_map_type values_hash;
-
-    GeoDistribution distribution;
-
     KeyStats() {
+    }
+
+    const Counter32& key() const noexcept {
+        return m_key;
+    }
+
+    const Counter32& values() const noexcept {
+        return m_values;
+    }
+
+    const Counter32& cells() const noexcept {
+        return m_cells;
+    }
+
+    void set_cells_count(osmium::item_type type, uint32_t count) noexcept {
+        m_cells.set_count(type, count);
+    }
+
+    const combination_hash_map_type& key_combination_hash() const noexcept {
+        return m_key_combination_hash;
+    }
+
+    const user_hash_map_type& user_hash() const noexcept {
+        return m_user_hash;
+    }
+
+    const value_hash_map_type& values_hash() const noexcept {
+        return m_values_hash;
+    }
+
+    GeoDistribution& distribution() noexcept {
+        return m_distribution;
+    }
+
+    const GeoDistribution& distribution() const noexcept {
+        return m_distribution;
     }
 
     void update(const char* value, const osmium::OSMObject& object, StringStore& string_store) {
         const auto type = object.type();
 
-        key.incr(type);
+        m_key.incr(type);
 
-        const auto values_iterator = values_hash.find(value);
-        if (values_iterator == values_hash.end()) {
+        const auto values_iterator = m_values_hash.find(value);
+        if (values_iterator == m_values_hash.end()) {
             Counter32 counter;
             counter.incr(type);
-            values_hash.insert(std::pair<const char*, Counter32>(string_store.add(value), counter));
-            values.incr(type);
+            m_values_hash.insert(std::pair<const char*, Counter32>(string_store.add(value), counter));
+            m_values.incr(type);
         } else {
             values_iterator->second.incr(type);
             if (values_iterator->second.count(type) == 1) {
-                values.incr(type);
+                m_values.incr(type);
             }
         }
 
-        user_hash[object.uid()]++;
+        m_user_hash[object.uid()]++;
     }
 
     void add_key_combination(const char* other_key, osmium::item_type type) {
-        key_combination_hash[other_key].incr(type);
+        m_key_combination_hash[other_key].incr(type);
     }
 
 }; // class KeyStats
