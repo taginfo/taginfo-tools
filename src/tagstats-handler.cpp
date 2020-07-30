@@ -63,8 +63,8 @@ uint64_t show_std_unordered_map_memory_usage(osmium::util::VerboseOutput& out, c
     const auto size = hash_map.size();
     const auto buckets = hash_map.bucket_count();
 
-    const int64_t sum = size * (value_size + sizeof(void*)) + // members and next ptr * size
-                        buckets * (sizeof(size_t) + sizeof(void*)); // bucket size and head ptr
+    const auto sum = size * (value_size + sizeof(void*)) + // members and next ptr * size
+                     buckets * (sizeof(size_t) + sizeof(void*)); // bucket size and head ptr
 
     out << std::setw(8) << (sum / 1024) << " kB [size="
         << size << " buckets="
@@ -79,7 +79,7 @@ uint64_t show_std_map_memory_usage(osmium::util::VerboseOutput& out, const T& ma
     const auto value_size = sizeof(typename T::value_type);
     const auto size = map.size();
 
-    const int64_t sum = size * (value_size + sizeof(void*) * 2); // members and left/right ptr * size
+    const auto sum = size * (value_size + sizeof(void*) * 2); // members and left/right ptr * size
 
     out << std::setw(8) << (sum / 1024) << " kB [size="
         << size << " sizeof(value_type)="
@@ -198,7 +198,7 @@ void TagStatsHandler::update_key_value_combination_hash(osmium::item_type type,
 }
 
 void TagStatsHandler::print_and_clear_key_distribution_images(osmium::item_type type) {
-    uint64_t sum_size = 0;
+    int64_t sum_size = 0;
 
     Sqlite::Statement statement_insert_into_key_distributions{m_database,
         "INSERT INTO key_distributions (key, object_type, png) VALUES (?, ?, ?);"};
@@ -230,7 +230,7 @@ void TagStatsHandler::print_and_clear_key_distribution_images(osmium::item_type 
 }
 
 void TagStatsHandler::print_and_clear_tag_distribution_images(osmium::item_type type) {
-    uint64_t sum_size = 0;
+    int64_t sum_size = 0;
 
     Sqlite::Statement statement_insert_into_tag_distributions{m_database,
         "INSERT INTO tag_distributions (key, value, object_type, png) VALUES (?, ?, ?, ?);"};
@@ -530,11 +530,11 @@ void TagStatsHandler::write_to_database() {
             .bind_int64(stat.key().nodes())        // column: count_nodes
             .bind_int64(stat.key().ways())         // column: count_ways
             .bind_int64(stat.key().relations())    // column: count_relations
-            .bind_int64(stat.values_hash().size()) // column: values_all
+            .bind_int64(static_cast<int64_t>(stat.values_hash().size())) // column: values_all
             .bind_int64(stat.values().nodes())     // column: values_nodes
             .bind_int64(stat.values().ways())      // column: values_ways
             .bind_int64(stat.values().relations()) // column: values_relations
-            .bind_int64(stat.user_hash().size())   // column: users_all
+            .bind_int64(static_cast<int64_t>(stat.user_hash().size()))   // column: users_all
             .bind_int64(stat.cells().nodes())      // column: cells_nodes
             .bind_int64(stat.cells().ways())       // column: cells_ways
             .execute();
@@ -577,12 +577,12 @@ void TagStatsHandler::write_to_database() {
     for (const auto& rtype_stats : m_relation_type_stats) {
         const RelationTypeStats& r = rtype_stats.second;
         statement_insert_into_relation_types
-            .bind_text(rtype_stats.first)        // column: rtype
-            .bind_int64(r.count())               // column: count
-            .bind_int64(r.members().all())       // column: members_all
-            .bind_int64(r.members().nodes())     // column: members_nodes
-            .bind_int64(r.members().ways())      // column: members_ways
-            .bind_int64(r.members().relations()) // column: members_relations
+            .bind_text(rtype_stats.first)                // column: rtype
+            .bind_int64(static_cast<int64_t>(r.count())) // column: count
+            .bind_int64(r.members().all())               // column: members_all
+            .bind_int64(r.members().nodes())             // column: members_nodes
+            .bind_int64(r.members().ways())              // column: members_ways
+            .bind_int64(r.members().relations())         // column: members_relations
             .execute();
 
         for (const auto& role_stats : r.role_counts()) {

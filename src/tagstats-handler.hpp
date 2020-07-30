@@ -181,9 +181,6 @@ class KeyStats {
     GeoDistribution m_distribution;
 
 public:
-    KeyStats() {
-    }
-
     const Counter32& key() const noexcept {
         return m_key;
     }
@@ -257,9 +254,6 @@ class KeyValueStats {
     combination_hash_map_type m_key_value_combination_hash;
 
 public:
-
-    KeyValueStats() {
-    }
 
     const combination_hash_map_type& key_value_combination_hash() const noexcept {
         return m_key_value_combination_hash;

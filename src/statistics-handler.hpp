@@ -39,7 +39,6 @@ public:
 
     explicit StatisticsHandler(Sqlite::Database& database) :
         Handler(),
-        m_stats(),
         m_database(database) {
     }
 
@@ -49,7 +48,7 @@ public:
         if (m_tag_count == 0) {
             m_stats.nodes_without_tags++;
         }
-        if (m_id > static_cast<int64_t>(m_stats.max_node_id)) {
+        if (m_id > m_stats.max_node_id) {
             m_stats.max_node_id = m_id;
         }
         m_stats.node_tags += m_tag_count;
@@ -68,7 +67,7 @@ public:
         if (way.is_closed()) {
             m_stats.closed_ways++;
         }
-        if (m_id > static_cast<int64_t>(m_stats.max_way_id)) {
+        if (m_id > m_stats.max_way_id) {
             m_stats.max_way_id = m_id;
         }
         m_stats.way_tags += m_tag_count;
@@ -103,7 +102,7 @@ public:
     void relation(const osmium::Relation& relation) noexcept {
         update_common_stats(relation);
         m_stats.relations++;
-        if (m_id > static_cast<int64_t>(m_stats.max_relation_id)) {
+        if (m_id > m_stats.max_relation_id) {
             m_stats.max_relation_id = m_id;
         }
         m_stats.relation_tags += m_tag_count;
@@ -184,12 +183,12 @@ public:
             statement_insert_into_main_stats
                 .bind_text(stat_names[i])
                 // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-                .bind_int64(reinterpret_cast<uint64_t*>(&m_stats)[i])
+                .bind_int64(static_cast<int64_t>(reinterpret_cast<uint64_t*>(&m_stats)[i]))
                 .execute();
         }
         statement_insert_into_main_stats
             .bind_text("nodes_with_tags")
-            .bind_int64(m_stats.nodes - m_stats.nodes_without_tags)
+            .bind_int64(static_cast<int64_t>(m_stats.nodes - m_stats.nodes_without_tags))
             .execute();
 
         m_database.commit();
@@ -239,12 +238,12 @@ private:
 
     Sqlite::Database& m_database;
 
-    osmium::object_id_type m_id = 0;
-    osmium::object_version_type m_version = 0;
+    osmium::unsigned_object_id_type m_id = 0;
     std::size_t m_tag_count = 0;
+    osmium::object_version_type m_version = 0;
 
     void update_common_stats(const osmium::OSMObject& object) noexcept {
-        m_id        = object.id();
+        m_id        = object.positive_id();
         m_version   = object.version();
         m_tag_count = object.tags().size();
 

@@ -35,8 +35,8 @@
 #include <string>
 
 GeoDistribution::geo_distribution_type GeoDistribution::c_distribution_all;
-int GeoDistribution::c_width;
-int GeoDistribution::c_height;
+unsigned int GeoDistribution::c_width;
+unsigned int GeoDistribution::c_height;
 
 static void print_help() {
     std::cout << "taginfo-stats [OPTIONS] OSMFILE DATABASE\n\n" \
@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
                 selection_database_name = optarg;
                 break;
             case 'm':
-                min_tag_combination_count = atoi(optarg);
+                min_tag_combination_count = get_uint(optarg);
                 break;
             case 't':
                 top = get_coordinate(optarg, 90.0);
@@ -130,10 +130,10 @@ int main(int argc, char* argv[]) {
                 left = get_coordinate(optarg, 180.0);
                 break;
             case 'w':
-                width = atoi(optarg);
+                width = get_uint(optarg);
                 break;
             case 'h':
-                height = atoi(optarg);
+                height = get_uint(optarg);
                 break;
             default:
                 std::exit(1);

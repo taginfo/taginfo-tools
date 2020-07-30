@@ -36,19 +36,19 @@ constexpr const int MAX_EDIT_DISTANCE = 2;
  * the Levenshtein algorithm I copied from somewhere on the Internet, but it
  * is fast enough for our purpose here.
  */
-static int edit_distance(const char* str1, int len1, const char* str2, int len2) noexcept {
+static int edit_distance(const char* str1, std::size_t len1, const char* str2, std::size_t len2) noexcept {
     static int d[MAX_STRLEN][MAX_STRLEN];
 
     d[0][0] = 0;
-    for (int i = 1; i <= len1; ++i) {
-        d[i][0] = i;
+    for (std::size_t i = 1; i <= len1; ++i) {
+        d[i][0] = static_cast<int>(i);
     }
-    for (int i = 1; i <= len2; ++i) {
-        d[0][i] = i;
+    for (std::size_t i = 1; i <= len2; ++i) {
+        d[0][i] = static_cast<int>(i);
     }
 
-    for (int i = 1; i <= len1; ++i) {
-        for (int j = 1; j <= len2; ++j) {
+    for (std::size_t i = 1; i <= len1; ++i) {
+        for (std::size_t j = 1; j <= len2; ++j) {
             d[i][j] = std::min(std::min(d[i - 1][j] + 1, d[i][j - 1] + 1),
                                d[i - 1][j - 1] + (str1[i - 1] == str2[j - 1] ? 0 : 1));
         }
@@ -60,7 +60,7 @@ static int edit_distance(const char* str1, int len1, const char* str2, int len2)
 /**
  * Are the two given strings similar according to some metric?
  */
-static int similarity(const char* str1, int len1, const char* str2, int len2) noexcept {
+static int similarity(const char* str1, std::size_t len1, const char* str2, std::size_t len2) noexcept {
     // Do not check very short strings, because they create too many false
     // positives.
     if (len1 < MIN_STRLEN || len2 < MIN_STRLEN) {
@@ -81,7 +81,7 @@ static int similarity(const char* str1, int len1, const char* str2, int len2) no
 
     // Do not check strings if they have very different lengths, they can't
     // be similar according to Levenshtein anyway.
-    if (std::abs(len1 - len2) >= MAX_EDIT_DISTANCE) {
+    if (std::abs(static_cast<int64_t>(len1) - static_cast<int64_t>(len2)) >= MAX_EDIT_DISTANCE) {
         return -1;
     }
 
@@ -99,10 +99,10 @@ static int similarity(const char* str1, int len1, const char* str2, int len2) no
  * end and find similar strings.
  */
 static void find_similarities(const char* begin, const char* end, Sqlite::Statement& insert) {
-    int len1;
+    std::size_t len1;
     for (const char* str1 = begin; str1 != end; str1 += len1 + 1) {
         len1 = std::strlen(str1);
-        int len2;
+        std::size_t len2;
         for (const char* str2 = str1 + len1; str2 != end; str2 += len2 + 1) {
             len2 = std::strlen(str2);
             int sim = similarity(str1, len1, str2, len2);

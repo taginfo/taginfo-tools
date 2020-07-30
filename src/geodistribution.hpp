@@ -77,15 +77,15 @@ public:
         if (x < 0) {
             x = 0;
         } else if (static_cast<unsigned int>(x) >= m_width) {
-            x = m_width-1;
+            x = static_cast<int>(m_width) - 1;
         }
         if (y < 0) {
             y = 0;
         } else if (static_cast<unsigned int>(y) >= m_height) {
-            y = m_height-1;
+            y = static_cast<int>(m_height) - 1;
         }
 
-        return y * m_width + x;
+        return static_cast<unsigned int>(y) * m_width + static_cast<unsigned int>(x);
     }
 
     unsigned int width() const noexcept {
@@ -128,8 +128,8 @@ class GeoDistribution {
     /// Overall distribution
     static geo_distribution_type c_distribution_all;
 
-    static int c_width;
-    static int c_height;
+    static unsigned int c_width;
+    static unsigned int c_height;
 
 public:
 
@@ -141,7 +141,7 @@ public:
         m_location = 0;
     }
 
-    static void set_dimensions(int width, int height) {
+    static void set_dimensions(unsigned int width, unsigned  int height) {
         c_width = width;
         c_height = height;
         c_distribution_all.resize(c_width * c_height);
@@ -182,8 +182,8 @@ public:
 
     public:
 
-        Image(int width, int height) :
-            m_image(gdImageCreate(width, height)) {
+        Image(unsigned int width, unsigned int height) :
+            m_image(gdImageCreate(static_cast<int>(width), static_cast<int>(height))) {
             gdImageColorTransparent(m_image, gdImageColorAllocate(m_image, 0, 0, 0));
             m_color = gdImageColorAllocate(m_image, 180, 0, 0);
         }
@@ -198,8 +198,8 @@ public:
             gdImageDestroy(m_image);
         }
 
-        void set_pixel(int x, int y) noexcept {
-            gdImageSetPixel(m_image, x, y, m_color);
+        void set_pixel(unsigned int x, unsigned int y) noexcept {
+            gdImageSetPixel(m_image, static_cast<int>(x), static_cast<int>(y), m_color);
         }
 
         gdImagePtr data() const noexcept {
@@ -243,13 +243,13 @@ public:
         Image image{c_width, c_height};
 
         if (m_cells == 1) {
-            const int y = m_location / c_width;
-            const int x = m_location - (y * c_width);
+            const auto y = m_location / c_width;
+            const auto x = m_location - (y * c_width);
             image.set_pixel(x, y);
         } else if (m_cells >= 2) {
-            int n = 0;
-            for (int y = 0; y < c_height; ++y) {
-                for (int x = 0; x < c_width; ++x) {
+            std::size_t n = 0;
+            for (unsigned int y = 0; y < c_height; ++y) {
+                for (unsigned int x = 0; x < c_width; ++x) {
                     if (m_distribution->operator[](n)) {
                         image.set_pixel(x, y);
                     }
@@ -278,8 +278,8 @@ public:
      * object.
      */
     static unsigned int count_all_set_cells() {
-        int c = 0;
-        for (int n = 0; n < c_width * c_height; ++n) {
+        unsigned int c = 0;
+        for (unsigned int n = 0; n < c_width * c_height; ++n) {
             if (c_distribution_all[n]) {
                 ++c;
             }
