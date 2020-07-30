@@ -35,7 +35,7 @@ find_program(CLANG_TIDY NAMES clang-tidy-10 clang-tidy-9 clang-tidy-8)
 if(CLANG_TIDY)
     message(STATUS "Looking for clang-tidy - found ${CLANG_TIDY}")
 
-    file(GLOB _srcs RELATIVE "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/src/*.cpp")
+    file(GLOB _srcs RELATIVE "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/src/*.cpp" "${CMAKE_SOURCE_DIR}/test/*.cpp")
 
     add_custom_target(clang-tidy
         ${CLANG_TIDY}
