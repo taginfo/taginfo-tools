@@ -1,5 +1,4 @@
-#ifndef TAGSTATS_STRING_STORE_HPP
-#define TAGSTATS_STRING_STORE_HPP
+#pragma once
 
 /*
 
@@ -98,5 +97,3 @@ public:
     }
 
 }; // class StringStore
-
-#endif // TAGSTATS_STRING_STORE_HPP
