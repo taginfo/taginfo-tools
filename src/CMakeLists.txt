@@ -17,6 +17,12 @@ target_compile_options(osmstats PRIVATE ${wopts})
 target_link_libraries(osmstats PRIVATE ${OSMIUM_LIBRARIES} ${SQLITE_LIBRARY})
 set_pthread_on_target(osmstats)
 
+add_executable(taginfo-chronology taginfo-chronology.cpp)
+target_include_directories(taginfo-chronology SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/abseil-cpp ${OSMIUM_INCLUDE_DIRS})
+target_compile_options(taginfo-chronology PRIVATE ${wopts})
+target_link_libraries(taginfo-chronology PRIVATE ${OSMIUM_LIBRARIES} ${SQLITE_LIBRARY} absl::flat_hash_map)
+set_pthread_on_target(taginfo-chronology)
+
 add_executable(taginfo-similarity taginfo-similarity.cpp)
 target_include_directories(taginfo-similarity SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_compile_options(taginfo-similarity PRIVATE ${wopts})

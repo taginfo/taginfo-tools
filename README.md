@@ -61,6 +61,7 @@ To run the tests, call `ctest`.
 ## Programs
 
 * `osmstats` - Create statistics from a planet or other OSM file (not used in taginfo)
+* `taginfo-chronology` - Create statistics from a history planet
 * `taginfo-similarity` - Find similarities between OSM tags
 * `taginfo-sizes` - Debugging tool to print out sizes of important structs from `taginfo-stats`
 * `taginfo-stats` - Create statistics from a planet or other OSM file
