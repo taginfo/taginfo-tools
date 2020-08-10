@@ -43,7 +43,7 @@ and `protozero` manually if their versions are too old in your distribution.
 Update [abseil submodule](https://github.com/abseil/abseil-cpp) with:
 
 ```
-git submodule update
+git submodule update --init
 ```
 
 Build as usual with CMake. For instance like this:
