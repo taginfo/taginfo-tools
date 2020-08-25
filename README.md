@@ -10,7 +10,7 @@ They used to "live" in the
 
 ## Prerequisites
 
-You need a C++14-compatible compiler.
+You need a C++14-compatible compiler, make and CMake.
 
 * [libgd](https://www.libgd.org/)
 * [libicu](https://icu-project.org/)
@@ -25,6 +25,7 @@ Ob Debian/Ubuntu install these like this:
 
 ```
 apt install \
+    cmake \
     libbz2-dev \
     libexpat1-dev \
     libgd-dev \
@@ -32,6 +33,7 @@ apt install \
     libosmium2-dev \
     libprotozero-dev \
     libsqlite3-dev \
+    make \
     zlib1g-dev
 ```
 
