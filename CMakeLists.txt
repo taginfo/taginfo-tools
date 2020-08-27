@@ -16,6 +16,19 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 14)
 
 #-----------------------------------------------------------------------------
+#
+# Set a default build type if none was specified
+#
+#-----------------------------------------------------------------------------
+
+set(default_build_type "Release")
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "Setting build type to '${default_build_type}' as none was specified.")
+    set(CMAKE_BUILD_TYPE "${default_build_type}" CACHE STRING "Choose the type of build." FORCE)
+endif()
+
+#-----------------------------------------------------------------------------
 
 find_package(ICU REQUIRED COMPONENTS io uc)
 find_package(Osmium 2.14.2 REQUIRED COMPONENTS io)
