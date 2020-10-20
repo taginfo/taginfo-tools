@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
         switch (c) {
             case 'H':
                 print_help();
-                std::exit(0);
+                return 0;
             case 'i':
                 index_type_name = optarg;
                 break;
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
                 std::cout << "  DenseMmapArray\n";
                 std::cout << "  SparseMmapArray\n";
 #endif
-                std::exit(0);
+                return 0;
             case 's':
                 selection_database_name = optarg;
                 break;
@@ -136,13 +136,13 @@ int main(int argc, char* argv[]) {
                 height = get_uint(optarg);
                 break;
             default:
-                std::exit(1);
+                return 1;
         }
     }
 
     if (argc - optind != 2) {
         std::cerr << "Usage: " << argv[0] << " [OPTIONS] OSMFILE DATABASE\n";
-        std::exit(1);
+        return 1;
     }
 
     osmium::util::VerboseOutput vout{true};
@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
 
     GeoDistribution::set_dimensions(width, height);
     osmium::io::File input_file{argv[optind]};
-    Sqlite::Database db{argv[optind+1], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
+    Sqlite::Database db{argv[optind + 1], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
 
     MapToInt map_to_int{left, bottom, right, top, width, height};
 

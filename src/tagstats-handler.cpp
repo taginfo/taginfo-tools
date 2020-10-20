@@ -342,7 +342,7 @@ TagStatsHandler::TagStatsHandler(Sqlite::Database& database,
     m_location_index(location_index)
 {
     if (!selection_database_name.empty()) {
-        Sqlite::Database sdb(selection_database_name.c_str(), SQLITE_OPEN_READONLY);
+        Sqlite::Database sdb{selection_database_name, SQLITE_OPEN_READONLY};
 
         {
             Sqlite::Statement select{sdb, "SELECT key FROM interesting_tags WHERE value IS NULL;"};

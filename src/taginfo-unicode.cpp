@@ -143,7 +143,7 @@ static void get_unicode_info(const char* text, Sqlite::Statement& insert) {
         insert.
             bind_text(text).
             bind_int(num).
-            bind_text(str.c_str()).
+            bind_text(str).
             bind_text(uplus.cbegin()).
             bind_int(block).
             bind_text(category_to_string(chartype)).
