@@ -25,6 +25,8 @@
 
 #include <sqlite.hpp>
 
+#include <osmium/diff_handler.hpp>
+#include <osmium/diff_visitor.hpp>
 #include <osmium/io/any_input.hpp>
 #include <osmium/io/file.hpp>
 #include <osmium/util/verbose_output.hpp>
@@ -57,6 +59,35 @@ static void print_help() {
               << "  -h, --height=NUMBER           Height of distribution images (default: 180)\n" \
               << "\nDefault for bounding box is: (-180, -90, 180, 90).\n";
 }
+
+class LastVersionHandler : public osmium::diff_handler::DiffHandler {
+
+    TagStatsHandler& m_handler;
+
+public:
+
+    LastVersionHandler(TagStatsHandler& handler) noexcept : m_handler(handler) {
+    }
+
+    void node(const osmium::DiffNode& node) {
+        if (node.last() && node.curr().visible()) {
+            m_handler.node(node.curr());
+        }
+    }
+
+    void way(const osmium::DiffWay& way) {
+        if (way.last() && way.curr().visible()) {
+            m_handler.way(way.curr());
+        }
+    }
+
+    void relation(const osmium::DiffRelation& relation) {
+        if (relation.last() && relation.curr().visible()) {
+            m_handler.relation(relation.curr());
+        }
+    }
+
+}; // LastVersionHandler
 
 int main(int argc, char* argv[]) {
     static const option long_options[] = {
@@ -156,11 +187,12 @@ int main(int argc, char* argv[]) {
 
     const bool better_resolution = (width * height) >= (1U << 16U);
     LocationIndex location_index{index_type_name, better_resolution};
-    TagStatsHandler handler{db, selection_database_name, map_to_int, min_tag_combination_count, vout, location_index};
+    TagStatsHandler tagstats_handler{db, selection_database_name, map_to_int, min_tag_combination_count, vout, location_index};
+    LastVersionHandler handler{tagstats_handler};
 
     osmium::io::Reader reader{input_file};
-    osmium::apply(reader, handler);
+    osmium::apply_diff(reader, handler);
 
-    handler.write_to_database();
+    tagstats_handler.write_to_database();
 }
 
