@@ -85,6 +85,12 @@ class chronology_store {
 
 public:
 
+    std::size_t bytes_used() const noexcept {
+        return sizeof(int32_t) * m_changes(osmium::item_type::node).size() +
+               sizeof(int32_t) * m_changes(osmium::item_type::way).size() +
+               sizeof(int32_t) * m_changes(osmium::item_type::relation).size();
+    }
+
     void update(osmium::item_type type, std::size_t day, int32_t change) {
         auto& v = m_changes(type);
         if (v.empty()) {
@@ -203,22 +209,31 @@ public:
     }
 
     void write(Sqlite::Database& db) const {
+        std::size_t bytes_keys = 0;
         {
             Sqlite::Statement statement_insert{db,
                 "INSERT INTO keys_chronology (key, data) VALUES (?, ?);"};
 
             for (const auto& hist : m_keys) {
+                bytes_keys += hist.second.bytes_used();
                 hist.second.write(statement_insert, hist.first);
             }
         }
+
+        m_vout << "Key counters needed " << (bytes_keys / (1024*1024)) << " MBytes\n";
+
+        std::size_t bytes_tags = 0;
         if (!m_tags.empty()) {
             Sqlite::Statement statement_insert{db,
                 "INSERT INTO tags_chronology (key, value, data) VALUES (?, ?, ?);"};
 
             for (const auto& hist : m_tags) {
+                bytes_tags += hist.second.bytes_used();
                 hist.second.write(statement_insert, hist.first);
             }
         }
+
+        m_vout << "Tag counters needed " << (bytes_tags / (1024*1024)) << " MBytes\n";
     }
 
 }; // class Handler
