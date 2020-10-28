@@ -190,10 +190,19 @@ int main(int argc, char* argv[]) {
 
     const bool better_resolution = (width * height) >= (1U << 16U);
     LocationIndex location_index{index_type_name, better_resolution};
+
+    osmium::io::Reader reader{input_file};
+    const bool is_history = reader.header().has_multiple_object_versions();
+
+    if (is_history) {
+        vout << "Input file is an OSM history file\n";
+    } else {
+        vout << "Input file is an OSM data file\n";
+    }
+
     TagStatsHandler tagstats_handler{db, selection_database_name, map_to_int, min_tag_combination_count, vout, location_index};
     LastVersionHandler handler{tagstats_handler};
 
-    osmium::io::Reader reader{input_file};
     osmium::apply_diff(reader, handler);
 
     tagstats_handler.write_to_database();

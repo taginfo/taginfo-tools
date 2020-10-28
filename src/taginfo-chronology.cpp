@@ -266,10 +266,15 @@ int main(int argc, char* argv[]) {
         db.exec("PRAGMA journal_mode = OFF;");
         db.exec("PRAGMA synchronous  = OFF;");
 
+        osmium::io::Reader reader{input_file};
+        if (! reader.header().has_multiple_object_versions()) {
+            std::cerr << "Input file is not an OSM history file!\n";
+            return 2;
+        }
+
         Handler handler{vout, selection_database_name};
 
-        vout << "Reading input file...\n";
-        osmium::io::Reader reader{input_file};
+        vout << "Processing input file...\n";
         osmium::apply_diff(reader, handler);
 
         vout << "Writing database...\n";
