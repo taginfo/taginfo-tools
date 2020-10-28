@@ -67,7 +67,8 @@ class LastVersionHandler : public osmium::diff_handler::DiffHandler {
 
 public:
 
-    LastVersionHandler(TagStatsHandler& handler) noexcept : m_handler(handler) {
+    explicit LastVersionHandler(TagStatsHandler& handler) noexcept :
+        m_handler(handler) {
     }
 
     void node(const osmium::DiffNode& node) {
