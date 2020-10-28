@@ -177,34 +177,41 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    osmium::util::VerboseOutput vout{true};
-    vout << "Starting taginfo-stats...\n";
-    vout << "  " << get_taginfo_tools_version() << '\n';
-    vout << "  " << get_libosmium_version() << '\n';
+    try {
+        osmium::util::VerboseOutput vout{true};
+        vout << "Starting taginfo-stats...\n";
+        vout << "  " << get_taginfo_tools_version() << '\n';
+        vout << "  " << get_libosmium_version() << '\n';
 
-    GeoDistribution::set_dimensions(width, height);
-    osmium::io::File input_file{argv[optind]};
-    Sqlite::Database db{argv[optind + 1], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
+        GeoDistribution::set_dimensions(width, height);
+        osmium::io::File input_file{argv[optind]};
+        Sqlite::Database db{argv[optind + 1], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
 
-    MapToInt map_to_int{left, bottom, right, top, width, height};
+        MapToInt map_to_int{left, bottom, right, top, width, height};
 
-    const bool better_resolution = (width * height) >= (1U << 16U);
-    LocationIndex location_index{index_type_name, better_resolution};
+        const bool better_resolution = (width * height) >= (1U << 16U);
+        LocationIndex location_index{index_type_name, better_resolution};
 
-    osmium::io::Reader reader{input_file};
-    const bool is_history = reader.header().has_multiple_object_versions();
+        osmium::io::Reader reader{input_file};
+        const bool is_history = reader.header().has_multiple_object_versions();
 
-    if (is_history) {
-        vout << "Input file is an OSM history file\n";
-    } else {
-        vout << "Input file is an OSM data file\n";
+        if (is_history) {
+            vout << "Input file is an OSM history file\n";
+        } else {
+            vout << "Input file is an OSM data file\n";
+        }
+
+        TagStatsHandler tagstats_handler{db, selection_database_name, map_to_int, min_tag_combination_count, vout, location_index};
+        LastVersionHandler handler{tagstats_handler};
+
+        osmium::apply_diff(reader, handler);
+
+        tagstats_handler.write_to_database();
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << '\n';
+        return 2;
     }
 
-    TagStatsHandler tagstats_handler{db, selection_database_name, map_to_int, min_tag_combination_count, vout, location_index};
-    LastVersionHandler handler{tagstats_handler};
-
-    osmium::apply_diff(reader, handler);
-
-    tagstats_handler.write_to_database();
+    return 0;
 }
 
