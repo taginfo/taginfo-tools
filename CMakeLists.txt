@@ -61,6 +61,27 @@ else()
     message(STATUS "  Build target 'clang-tidy' will not be available.")
 endif()
 
+#-----------------------------------------------------------------------------
+#
+#  Version
+#
+#-----------------------------------------------------------------------------
+
+find_package(Git)
+
+if(GIT_FOUND)
+    execute_process(COMMAND "${GIT_EXECUTABLE}" rev-parse --short HEAD
+                    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+                    OUTPUT_VARIABLE VERSION_FROM_GIT
+                    ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+endif()
+
+set(VERSION_CPP ${PROJECT_BINARY_DIR}/src/version.cpp)
+
+configure_file(
+    ${PROJECT_SOURCE_DIR}/src/version.cpp.in
+    ${VERSION_CPP}
+)
 
 #-----------------------------------------------------------------------------
 

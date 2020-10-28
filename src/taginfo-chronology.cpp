@@ -19,6 +19,8 @@
 
 */
 
+#include "version.hpp"
+
 #include <sqlite.hpp>
 
 #include <osmium/diff_handler.hpp>
@@ -256,6 +258,8 @@ int main(int argc, char* argv[]) {
     try {
         osmium::util::VerboseOutput vout{true};
         vout << "Starting taginfo-chronology...\n";
+        vout << "  " << get_taginfo_tools_version() << '\n';
+        vout << "  " << get_libosmium_version() << '\n';
 
         osmium::io::File input_file{argv[optind]};
         Sqlite::Database db{argv[optind + 1], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)

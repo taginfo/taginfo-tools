@@ -1,0 +1,11 @@
+
+#include <osmium/version.hpp>
+
+const char* get_taginfo_tools_version() noexcept {
+    return "git commit @VERSION_FROM_GIT@";
+}
+
+const char* get_libosmium_version() noexcept {
+    return "libosmium version " LIBOSMIUM_VERSION_STRING;
+}
+

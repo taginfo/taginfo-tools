@@ -22,6 +22,7 @@
 #include "geodistribution.hpp"
 #include "tagstats-handler.hpp"
 #include "util.hpp"
+#include "version.hpp"
 
 #include <sqlite.hpp>
 
@@ -178,6 +179,8 @@ int main(int argc, char* argv[]) {
 
     osmium::util::VerboseOutput vout{true};
     vout << "Starting taginfo-stats...\n";
+    vout << "  " << get_taginfo_tools_version() << '\n';
+    vout << "  " << get_libosmium_version() << '\n';
 
     GeoDistribution::set_dimensions(width, height);
     osmium::io::File input_file{argv[optind]};
