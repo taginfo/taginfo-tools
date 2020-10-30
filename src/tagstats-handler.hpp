@@ -118,7 +118,7 @@ public:
 template <typename T>
 class Counter {
 
-    osmium::nwr_array<T> m_count;
+    osmium::nwr_array<T> m_count{};
 
 public:
 
