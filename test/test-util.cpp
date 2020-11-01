@@ -21,3 +21,8 @@ TEST_CASE("Invalid coordinates for get_coordinate") {
     CHECK_THROWS(get_coordinate("238427432238492347983432.73", max));
 }
 
+TEST_CASE("Timestamp to string") {
+    const auto ts = osmium::Timestamp{1};
+    CHECK(time_string(ts) == "1970-01-01 00:00:01");
+}
+

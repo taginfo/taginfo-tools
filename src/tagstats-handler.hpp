@@ -322,7 +322,7 @@ class TagStatsHandler : public osmium::handler::Handler {
 
     absl::flat_hash_map<std::string, RelationTypeStats> m_relation_type_stats;
 
-    time_t m_max_timestamp = 0;
+    osmium::Timestamp m_max_timestamp{};
 
     // this must be much bigger than the largest string we want to store
     static const int string_store_size = 1024 * 1024 * 10;

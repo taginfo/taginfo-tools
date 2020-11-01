@@ -22,6 +22,7 @@
 #include "geodistribution.hpp"
 #include "string-store.hpp"
 #include "tagstats-handler.hpp"
+#include "util.hpp"
 
 #include <sqlite.hpp>
 
@@ -277,8 +278,8 @@ KeyStats& TagStatsHandler::get_stat(const char* key) {
 }
 
 void TagStatsHandler::collect_tag_stats(const osmium::OSMObject& object) {
-    if (m_max_timestamp < object.timestamp().seconds_since_epoch()) {
-        m_max_timestamp = object.timestamp().seconds_since_epoch();
+    if (m_max_timestamp < object.timestamp()) {
+        m_max_timestamp = object.timestamp();
     }
 
     if (object.tags().empty()) {
@@ -488,10 +489,7 @@ void TagStatsHandler::write_to_database() {
 
     m_database.begin_transaction();
 
-    struct tm* tm = std::gmtime(&m_max_timestamp);
-    static std::array<char, 20> max_timestamp_str; // thats enough space for the timestamp generated from the pattern in the next line
-    strftime(max_timestamp_str.begin(), max_timestamp_str.size(), "%Y-%m-%d %H:%M:%S", tm);
-    statement_update_meta.bind_text(max_timestamp_str.cbegin()).execute();
+    statement_update_meta.bind_text(time_string(m_max_timestamp)).execute();
 
     uint64_t values_hash_size = 0;
     uint64_t values_hash_buckets = 0;

@@ -19,6 +19,7 @@
 
 */
 
+#include "util.hpp"
 #include "version.hpp"
 
 #include <sqlite.hpp>
@@ -143,27 +144,13 @@ class Handler : osmium::diff_handler::DiffHandler {
     absl::flat_hash_map<std::string, chronology_store> m_keys;
     absl::flat_hash_map<std::pair<std::string, std::string>, chronology_store> m_tags;
 
-public:
-
-    Handler(osmium::util::VerboseOutput& vout, const std::string &selection_database_name) :
-        m_vout(vout) {
-        if (!selection_database_name.empty()) {
-            m_vout << "Opening selection database: " << selection_database_name << '\n';
-            Sqlite::Database sdb{selection_database_name, SQLITE_OPEN_READONLY};
-
-            Sqlite::Statement select{sdb, "SELECT key, value FROM frequent_tags;"};
-            int n = 0;
-            while (select.read()) {
-                const auto key   = select.get_text_ptr(0);
-                const auto value = select.get_text_ptr(1);
-                m_tags.emplace(std::pair<std::string, std::string>{key, value}, chronology_store{});
-                ++n;
-            }
-            m_vout << "  got " << n << " tags\n";
-        }
-    }
+    osmium::Timestamp m_max_timestamp{};
 
     void object(const osmium::DiffObject& object) {
+        if (m_max_timestamp < object.curr().timestamp()) {
+            m_max_timestamp = object.curr().timestamp();
+        }
+
         if (object.curr().deleted()) {
             return;
         }
@@ -196,6 +183,26 @@ public:
         }
     }
 
+public:
+
+    Handler(osmium::util::VerboseOutput& vout, const std::string &selection_database_name) :
+        m_vout(vout) {
+        if (!selection_database_name.empty()) {
+            m_vout << "Opening selection database: " << selection_database_name << '\n';
+            Sqlite::Database sdb{selection_database_name, SQLITE_OPEN_READONLY};
+
+            Sqlite::Statement select{sdb, "SELECT key, value FROM frequent_tags;"};
+            int n = 0;
+            while (select.read()) {
+                const auto key   = select.get_text_ptr(0);
+                const auto value = select.get_text_ptr(1);
+                m_tags.emplace(std::pair<std::string, std::string>{key, value}, chronology_store{});
+                ++n;
+            }
+            m_vout << "  got " << n << " tags\n";
+        }
+    }
+
     void node(const osmium::DiffNode& node) {
         object(node);
     }
@@ -209,8 +216,13 @@ public:
     }
 
     void write(Sqlite::Database& db) const {
-        std::size_t bytes_keys = 0;
         {
+            Sqlite::Statement statement_update_meta{db, "UPDATE source SET data_until=?"};
+            statement_update_meta.bind_text(time_string(m_max_timestamp)).execute();
+        }
+        {
+            std::size_t bytes_keys = 0;
+
             Sqlite::Statement statement_insert{db,
                 "INSERT INTO keys_chronology (key, data) VALUES (?, ?);"};
 
@@ -218,9 +230,9 @@ public:
                 bytes_keys += hist.second.bytes_used();
                 hist.second.write(statement_insert, hist.first);
             }
-        }
 
-        m_vout << "Key counters needed " << (bytes_keys / (1024*1024)) << " MBytes\n";
+            m_vout << "Key counters needed " << (bytes_keys / (1024*1024)) << " MBytes\n";
+        }
 
         std::size_t bytes_tags = 0;
         if (!m_tags.empty()) {

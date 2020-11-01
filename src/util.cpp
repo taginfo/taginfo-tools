@@ -35,3 +35,11 @@ unsigned int get_uint(const char* str) {
     return static_cast<unsigned int>(value);
 }
 
+std::string time_string(osmium::Timestamp timestamp) {
+    std::string ts{timestamp.to_iso_all()};
+    assert(ts.size() > 10U);
+    ts.replace(10, 1, " "); // replace "T" with space
+    ts.pop_back(); // remove "Z" at end
+    return ts;
+}
+
