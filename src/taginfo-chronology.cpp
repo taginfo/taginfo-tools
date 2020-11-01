@@ -145,6 +145,12 @@ class Handler : osmium::diff_handler::DiffHandler {
     absl::flat_hash_map<std::pair<std::string, std::string>, chronology_store> m_tags;
 
     osmium::Timestamp m_max_timestamp{};
+    std::size_t m_count_nodes = 0;
+    std::size_t m_count_ways = 0;
+    std::size_t m_count_relations = 0;
+    std::size_t m_count_visible_nodes = 0;
+    std::size_t m_count_visible_ways = 0;
+    std::size_t m_count_visible_relations = 0;
 
     void object(const osmium::DiffObject& object) {
         if (m_max_timestamp < object.curr().timestamp()) {
@@ -204,21 +210,42 @@ public:
     }
 
     void node(const osmium::DiffNode& node) {
+        ++m_count_nodes;
+        if (node.curr().visible()) {
+            ++m_count_visible_nodes;
+        }
         object(node);
     }
 
     void way(const osmium::DiffWay& way) {
+        ++m_count_ways;
+        if (way.curr().visible()) {
+            ++m_count_visible_ways;
+        }
         object(way);
     }
 
-    void relation(const osmium::DiffRelation& rel) {
-        object(rel);
+    void relation(const osmium::DiffRelation& relation) {
+        ++m_count_relations;
+        if (relation.curr().visible()) {
+            ++m_count_visible_relations;
+        }
+        object(relation);
     }
 
     void write(Sqlite::Database& db) const {
         {
             Sqlite::Statement statement_update_meta{db, "UPDATE source SET data_until=?"};
             statement_update_meta.bind_text(time_string(m_max_timestamp)).execute();
+        }
+        {
+            Sqlite::Statement stmt{db, "INSERT INTO stats (key, value) VALUES (?, ?)"};
+            stmt.bind_text("chronology_num_nodes").bind_int64(m_count_nodes).execute();
+            stmt.bind_text("chronology_num_visible_nodes").bind_int64(m_count_visible_nodes).execute();
+            stmt.bind_text("chronology_num_ways").bind_int64(m_count_ways).execute();
+            stmt.bind_text("chronology_num_visible_ways").bind_int64(m_count_visible_ways).execute();
+            stmt.bind_text("chronology_num_relations").bind_int64(m_count_relations).execute();
+            stmt.bind_text("chronology_num_visible_relations").bind_int64(m_count_visible_relations).execute();
         }
         {
             std::size_t bytes_keys = 0;
