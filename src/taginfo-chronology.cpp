@@ -57,12 +57,14 @@ static void print_help() {
 
 class chronology_store {
 
-    // Start from 2005-01-01 (that's 35 years + 9 leap days from 1970-01-01)
-    static constexpr const std::size_t offset_days = 365 * 35 + 9;
+    // Due to database format changes on that date, the OSM history data dump
+    // does not contain version numbers before 2007-10-07. So we simply start
+    // our statistics on that date. This is the offset from 1970-01-01.
+    static constexpr const std::size_t offset_days = 13793;
 
     osmium::nwr_array<std::vector<int32_t>> m_changes;
 
-    // Number of days we store from today back to 2005-01-01
+    // Number of days we store from today back to 2007-10-07
     std::size_t count = (std::time(nullptr) / seconds_in_a_day) + 1 - offset_days;
 
     int32_t nodes(std::size_t n) const noexcept {
@@ -97,8 +99,13 @@ public:
         if (v.empty()) {
             v.resize(count);
         }
-        const auto idx = day - offset_days;
-        v[idx] += change;
+
+        if (day <= offset_days) {
+            v[0] += change;
+        } else {
+            const auto idx = day - offset_days;
+            v[idx] += change;
+        }
     }
 
     void write(Sqlite::Statement& stmt, const std::string& key) const {
