@@ -6,7 +6,7 @@ file. These are used as part of [taginfo](https://github.com/taginfo/taginfo).
 They used to "live" in the
 [main taginfo repository](https://github.com/taginfo/taginfo).
 
-[![Travis Build Status](https://travis-ci.org/taginfo/taginfo-tools.svg?branch=master)](https://travis-ci.org/github/taginfo/taginfo-tools)
+[![Build Status](https://github.com/taginfo/taginfo-tools/workflows/CI/badge.svg?branch=master)](https://github.com/taginfo/taginfo-tools/actions)
 
 There is no versioning of these tools. The official site always runs the
 version tagged `osmorg-taginfo-live`. If you are using the tools, we encourage
