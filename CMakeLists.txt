@@ -43,7 +43,7 @@ find_library(SQLITE_LIBRARY NAMES sqlite3)
 #
 #-----------------------------------------------------------------------------
 message(STATUS "Looking for clang-tidy")
-find_program(CLANG_TIDY NAMES clang-tidy-10 clang-tidy-9 clang-tidy-8)
+find_program(CLANG_TIDY NAMES clang-tidy-15 clang-tidy-14 clang-tidy-13 clang-tidy-12 clang-tidy-11)
 
 if(CLANG_TIDY)
     message(STATUS "Looking for clang-tidy - found ${CLANG_TIDY}")
