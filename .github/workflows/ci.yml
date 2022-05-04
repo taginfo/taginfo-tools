@@ -57,6 +57,47 @@ jobs:
       - uses: ./.github/actions/ubuntu-prerequisites
       - uses: ./.github/actions/build-and-test
 
+  ubuntu22-clang-dev:
+    runs-on: ubuntu-22.04
+    env:
+      CC: clang
+      CXX: clang++
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: ./.github/actions/ubuntu-prerequisites
+      - uses: ./.github/actions/build-and-test
+
+  ubuntu22-clang-san-dev:
+    runs-on: ubuntu-22.04
+    env:
+      CC: clang
+      CXX: clang++
+      BUILD_TYPE: Dev
+      CXXFLAGS: -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer
+      LDFLAGS: -fsanitize=address,undefined
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: ./.github/actions/ubuntu-prerequisites
+      - uses: ./.github/actions/build-and-test
+
+  ubuntu22-clang-release:
+    runs-on: ubuntu-22.04
+    env:
+      CC: clang
+      CXX: clang++
+      BUILD_TYPE: Release
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: ./.github/actions/ubuntu-prerequisites
+      - uses: ./.github/actions/build-and-test
+
   ubuntu18-gcc-dev:
     runs-on: ubuntu-18.04
     env:
@@ -83,8 +124,21 @@ jobs:
       - uses: ./.github/actions/ubuntu-prerequisites
       - uses: ./.github/actions/build-and-test
 
-  ubuntu20-gcc-release:
-    runs-on: ubuntu-20.04
+  ubuntu22-gcc-dev:
+    runs-on: ubuntu-22.04
+    env:
+      CC: gcc-9
+      CXX: g++-9
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: ./.github/actions/ubuntu-prerequisites
+      - uses: ./.github/actions/build-and-test
+
+  ubuntu22-gcc-release:
+    runs-on: ubuntu-22.04
     env:
       CC: gcc-9
       CXX: g++-9
