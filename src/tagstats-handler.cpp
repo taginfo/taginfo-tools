@@ -348,22 +348,22 @@ TagStatsHandler::TagStatsHandler(Sqlite::Database& database,
         {
             Sqlite::Statement select{sdb, "SELECT key FROM interesting_tags WHERE value IS NULL;"};
             while (select.read()) {
-                const auto key_value = select.get_text_ptr(0);
+                const auto *const key_value = select.get_text_ptr(0);
                 m_key_value_stats.emplace(m_string_store.add(key_value), KeyValueStats{});
             }
         }
         {
             Sqlite::Statement select{sdb, "SELECT key || '=' || value FROM interesting_tags WHERE value IS NOT NULL;"};
             while (select.read()) {
-                const auto key_value = select.get_text_ptr(0);
+                const auto *const key_value = select.get_text_ptr(0);
                 m_key_value_stats.emplace(m_string_store.add(key_value), KeyValueStats{});
             }
         }
         {
             Sqlite::Statement select{sdb, "SELECT key, value FROM frequent_tags;"};
             while (select.read()) {
-                const auto key   = select.get_text_ptr(0);
-                const auto value = select.get_text_ptr(1);
+                const auto *const key   = select.get_text_ptr(0);
+                const auto *const value = select.get_text_ptr(1);
                 m_key_value_geodistribution.emplace(std::make_pair(m_string_store.add(key),
                                                                    m_string_store.add(value)),
                                                     GeoDistribution{});
@@ -372,7 +372,7 @@ TagStatsHandler::TagStatsHandler(Sqlite::Database& database,
         {
             Sqlite::Statement select{sdb, "SELECT rtype FROM interesting_relation_types;"};
             while (select.read()) {
-                const auto rtype = select.get_text_ptr(0);
+                const auto *const rtype = select.get_text_ptr(0);
                 m_relation_type_stats[rtype] = RelationTypeStats{};
             }
         }

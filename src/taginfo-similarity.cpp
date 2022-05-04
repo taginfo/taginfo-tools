@@ -99,10 +99,10 @@ static int similarity(const char* str1, std::size_t len1, const char* str2, std:
  * end and find similar strings.
  */
 static void find_similarities(const char* begin, const char* end, Sqlite::Statement& insert) {
-    std::size_t len1;
+    std::size_t len1 = 0;
     for (const char* str1 = begin; str1 != end; str1 += len1 + 1) {
         len1 = std::strlen(str1);
-        std::size_t len2;
+        std::size_t len2 = 0;
         for (const char* str2 = str1 + len1; str2 != end; str2 += len2 + 1) {
             len2 = std::strlen(str2);
             int sim = similarity(str1, len1, str2, len2);

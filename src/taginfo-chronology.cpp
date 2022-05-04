@@ -207,8 +207,8 @@ public:
             Sqlite::Statement select{sdb, "SELECT key, value FROM frequent_tags;"};
             int n = 0;
             while (select.read()) {
-                const auto key   = select.get_text_ptr(0);
-                const auto value = select.get_text_ptr(1);
+                const auto *const key   = select.get_text_ptr(0);
+                const auto *const value = select.get_text_ptr(1);
                 m_tags.emplace(std::pair<std::string, std::string>{key, value}, chronology_store{});
                 ++n;
             }

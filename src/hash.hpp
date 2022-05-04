@@ -10,8 +10,8 @@
  */
 struct djb2_hash {
 
-    std::size_t calc(std::size_t hash, const char *str) const noexcept {
-        std::size_t c;
+    static std::size_t calc(std::size_t hash, const char *str) noexcept {
+        std::size_t c = 0;
 
         while ((c = static_cast<std::size_t>(*str++))) {
             hash = ((hash << 5U) + hash) + c; /* hash * 33 + c */
