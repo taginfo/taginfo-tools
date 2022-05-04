@@ -8,6 +8,7 @@ runs:
       run: |
         sudo apt-get update -q
         # workaround for https://github.com/actions/virtual-environments/issues/2139
+        sudo apt-get remove nginx
         sudo apt-get remove libgd3
         sudo apt-get install -yq libgd-dev libutfcpp-dev
       shell: bash
