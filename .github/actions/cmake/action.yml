@@ -1,7 +1,7 @@
-name: 'Build and test'
+name: CMake
 
 runs:
-    using: "composite"
+    using: composite
 
     steps:
       - name: Create build directory
@@ -15,16 +15,6 @@ runs:
            -DOSMIUM_INCLUDE_DIR=${GITHUB_WORKSPACE}/../libosmium/include \
            -DPROTOZERO_INCLUDE_DIR=${GITHUB_WORKSPACE}/../protozero/include \
            -DERROR_ON_WARNINGS=ON
-        shell: bash
-        working-directory: build
-
-      - name: Build
-        run: make VERBOSE=1
-        shell: bash
-        working-directory: build
-
-      - name: Test
-        run: ctest --output-on-failure
         shell: bash
         working-directory: build
 

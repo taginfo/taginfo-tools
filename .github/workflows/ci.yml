@@ -14,7 +14,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu20-clang-dev:
     runs-on: ubuntu-20.04
@@ -27,7 +29,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu20-clang-san-dev:
     runs-on: ubuntu-20.04
@@ -42,7 +46,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu20-clang-release:
     runs-on: ubuntu-20.04
@@ -55,7 +61,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu22-clang-dev:
     runs-on: ubuntu-22.04
@@ -68,7 +76,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu22-clang-san-dev:
     runs-on: ubuntu-22.04
@@ -83,7 +93,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu22-clang-release:
     runs-on: ubuntu-22.04
@@ -96,7 +108,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu18-gcc-dev:
     runs-on: ubuntu-18.04
@@ -109,7 +123,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu20-gcc-dev:
     runs-on: ubuntu-20.04
@@ -122,7 +138,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu22-gcc-dev:
     runs-on: ubuntu-22.04
@@ -135,7 +153,9 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
   ubuntu22-gcc-release:
     runs-on: ubuntu-22.04
@@ -148,5 +168,7 @@ jobs:
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/build-and-test
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
 
