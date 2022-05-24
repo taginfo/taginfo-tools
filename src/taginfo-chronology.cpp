@@ -1,6 +1,6 @@
 /*
 
-  Copyright (C) 2012-2020 Jochen Topf <jochen@topf.org>.
+  Copyright (C) 2012-2022 Jochen Topf <jochen@topf.org>.
 
   This file is part of Taginfo Tools.
 
@@ -58,7 +58,7 @@ static void print_help() {
 class chronology_store {
 
     // Due to database format changes on that date, the OSM history data dump
-    // does not contain version numbers before 2007-10-07. So we simply start
+    // does not contain object versions before 2007-10-07. So we simply start
     // our statistics on that date. This is the offset from 1970-01-01.
     static constexpr const std::size_t offset_days = 13793;
 
@@ -111,8 +111,12 @@ public:
     void write(Sqlite::Statement& stmt, const std::string& key) const {
         std::vector<int32_t> out;
 
+        int first_use = 0;
         for (std::size_t i = 0; i < count; ++i) {
             if (any(i)) {
+                if (first_use == 0) {
+                    first_use = i + offset_days;
+                }
                 out.push_back(static_cast<int32_t>(i + offset_days));
                 out.push_back(nodes(i));
                 out.push_back(ways(i));
@@ -122,14 +126,19 @@ public:
 
         stmt.bind_text(key)
             .bind_blob(out.data(), static_cast<int>(out.size() * sizeof(int32_t)))
+            .bind_int(first_use * 60 * 60 * 24)
             .execute();
     }
 
     void write(Sqlite::Statement& stmt, const std::pair<std::string, std::string>& tag) const {
         std::vector<int32_t> out;
 
+        int first_use = 0;
         for (std::size_t i = 0; i < count; ++i) {
             if (any(i)) {
+                if (first_use == 0) {
+                    first_use = i + offset_days;
+                }
                 out.push_back(static_cast<int32_t>(i + offset_days));
                 out.push_back(nodes(i));
                 out.push_back(ways(i));
@@ -140,6 +149,7 @@ public:
         stmt.bind_text(tag.first)
             .bind_text(tag.second)
             .bind_blob(out.data(), static_cast<int>(out.size() * sizeof(int32_t)))
+            .bind_int(first_use * 60 * 60 * 24)
             .execute();
     }
 
@@ -258,7 +268,7 @@ public:
             std::size_t bytes_keys = 0;
 
             Sqlite::Statement statement_insert{db,
-                "INSERT INTO keys_chronology (key, data) VALUES (?, ?);"};
+                "INSERT INTO keys_chronology (key, data, first_use) VALUES (?, ?, ?);"};
 
             for (const auto& hist : m_keys) {
                 bytes_keys += hist.second.bytes_used();
@@ -271,7 +281,7 @@ public:
         std::size_t bytes_tags = 0;
         if (!m_tags.empty()) {
             Sqlite::Statement statement_insert{db,
-                "INSERT INTO tags_chronology (key, value, data) VALUES (?, ?, ?);"};
+                "INSERT INTO tags_chronology (key, value, data, first_use) VALUES (?, ?, ?, ?);"};
 
             for (const auto& hist : m_tags) {
                 bytes_tags += hist.second.bytes_used();
