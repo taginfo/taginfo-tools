@@ -42,6 +42,7 @@ apt install \
     libprotozero-dev \
     libsqlite3-dev \
     make \
+    sqlite3 \
     zlib1g-dev
 ```
 
