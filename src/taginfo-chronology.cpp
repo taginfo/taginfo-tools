@@ -46,6 +46,14 @@
 
 static constexpr const std::size_t seconds_in_a_day = 60 * 60 * 24;
 
+// Due to database format changes on that date, the OSM history data dump
+// does not contain object versions before 2007-10-07. So we simply start
+// our statistics on that date. This is the offset from 1970-01-01.
+static constexpr const std::size_t offset_days = 13793;
+
+// Number of days we store from today back to 2007-10-07
+static std::size_t const count = (std::time(nullptr) / seconds_in_a_day) + 1 - offset_days;
+
 static void print_help() {
     std::cout << "taginfo-chronology [OPTIONS] OSMFILE DATABASE\n\n" \
               << "This program is part of taginfo. It calculates statistics on OSM tags\n" \
@@ -57,15 +65,7 @@ static void print_help() {
 
 class chronology_store {
 
-    // Due to database format changes on that date, the OSM history data dump
-    // does not contain object versions before 2007-10-07. So we simply start
-    // our statistics on that date. This is the offset from 1970-01-01.
-    static constexpr const std::size_t offset_days = 13793;
-
     osmium::nwr_array<std::vector<int32_t>> m_changes;
-
-    // Number of days we store from today back to 2007-10-07
-    std::size_t count = (std::time(nullptr) / seconds_in_a_day) + 1 - offset_days;
 
     int32_t nodes(std::size_t n) const noexcept {
         const auto& v = m_changes(osmium::item_type::node);
