@@ -64,6 +64,9 @@ public:
     void way(const osmium::Way& way) noexcept {
         update_common_stats(way);
         m_stats.ways++;
+        if (m_tag_count == 0) {
+            m_stats.ways_without_tags++;
+        }
         if (way.is_closed()) {
             m_stats.closed_ways++;
         }
@@ -102,6 +105,9 @@ public:
     void relation(const osmium::Relation& relation) noexcept {
         update_common_stats(relation);
         m_stats.relations++;
+        if (m_tag_count == 0) {
+            m_stats.relations_without_tags++;
+        }
         if (m_id > m_stats.max_relation_id) {
             m_stats.max_relation_id = m_id;
         }
@@ -134,9 +140,13 @@ public:
                     break;
             }
         }
+        const char* type = relation.tags().get_value_by_key("type");
+        if (!type) {
+            m_stats.relations_without_type++;
+        }
     }
 
-    static constexpr const std::size_t num_stats = 33;
+    static constexpr const std::size_t num_stats = 36;
 
     void write_to_database() {
         // if you change anything in this array, also change the corresponding struct below
@@ -147,6 +157,7 @@ public:
             "max_node_id",
             "max_tags_on_node",
             "ways",
+            "ways_without_tags",
             "way_tags",
             "way_nodes",
             "way_nodes_consecutive",
@@ -157,6 +168,8 @@ public:
             "max_nodes_on_way",
             "closed_ways",
             "relations",
+            "relations_without_tags",
+            "relations_without_type",
             "relation_tags",
             "relation_members",
             "relation_member_nodes",
@@ -204,6 +217,7 @@ private:
         uint64_t max_node_id = 0;
         uint64_t max_tags_on_node = 0;
         uint64_t ways = 0;
+        uint64_t ways_without_tags = 0;
         uint64_t way_tags = 0;
         uint64_t way_nodes = 0;
         uint64_t way_nodes_consecutive = 0;
@@ -214,6 +228,8 @@ private:
         uint64_t max_nodes_on_way = 0;
         uint64_t closed_ways = 0;
         uint64_t relations = 0;
+        uint64_t relations_without_tags = 0;
+        uint64_t relations_without_type = 0;
         uint64_t relation_tags = 0;
         uint64_t relation_members = 0;
         uint64_t relation_member_nodes = 0;

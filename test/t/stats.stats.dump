@@ -23,6 +23,8 @@ relation_member_ways|1
 relation_members|1
 relation_tags|1
 relations|1
+relations_without_tags|0
+relations_without_type|0
 sum_node_version|8
 sum_relation_version|1
 sum_way_version|4
@@ -32,3 +34,4 @@ way_nodes_within_127|5
 way_nodes_within_32767|0
 way_tags|5
 ways|4
+ways_without_tags|0
