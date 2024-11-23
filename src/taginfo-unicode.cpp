@@ -80,7 +80,7 @@ static const char* category_to_string(int8_t category) noexcept {
 
 static bool is_plain(const char* t) noexcept {
     for (; *t; ++t) {
-        if (!(std::isalnum(*t) || *t == '_' || *t == ':' || *t == ' ' || *t == '.' || *t == '-')) {
+        if (!std::isalnum(*t) && *t != '_' && *t != ':' && *t != ' ' && *t != '.' && *t != '-') {
             return false;
         }
     }

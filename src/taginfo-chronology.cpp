@@ -44,7 +44,7 @@
 #include <utility>
 #include <vector>
 
-static constexpr const std::size_t seconds_in_a_day = 60 * 60 * 24;
+static constexpr const std::size_t seconds_in_a_day = 60UL * 60UL * 24UL;
 
 // Due to database format changes on that date, the OSM history data dump
 // does not contain object versions before 2007-10-07. So we simply start
@@ -257,12 +257,12 @@ public:
         }
         {
             Sqlite::Statement stmt{db, "INSERT INTO stats (key, value) VALUES (?, ?)"};
-            stmt.bind_text("chronology_num_nodes").bind_int64(m_count_nodes).execute();
-            stmt.bind_text("chronology_num_visible_nodes").bind_int64(m_count_visible_nodes).execute();
-            stmt.bind_text("chronology_num_ways").bind_int64(m_count_ways).execute();
-            stmt.bind_text("chronology_num_visible_ways").bind_int64(m_count_visible_ways).execute();
-            stmt.bind_text("chronology_num_relations").bind_int64(m_count_relations).execute();
-            stmt.bind_text("chronology_num_visible_relations").bind_int64(m_count_visible_relations).execute();
+            stmt.bind_text("chronology_num_nodes").bind_int64(static_cast<int64_t>(m_count_nodes)).execute();
+            stmt.bind_text("chronology_num_visible_nodes").bind_int64(static_cast<int64_t>(m_count_visible_nodes)).execute();
+            stmt.bind_text("chronology_num_ways").bind_int64(static_cast<int64_t>(m_count_ways)).execute();
+            stmt.bind_text("chronology_num_visible_ways").bind_int64(static_cast<int64_t>(m_count_visible_ways)).execute();
+            stmt.bind_text("chronology_num_relations").bind_int64(static_cast<int64_t>(m_count_relations)).execute();
+            stmt.bind_text("chronology_num_visible_relations").bind_int64(static_cast<int64_t>(m_count_visible_relations)).execute();
         }
         {
             std::size_t bytes_keys = 0;
@@ -275,7 +275,7 @@ public:
                 hist.second.write(statement_insert, hist.first);
             }
 
-            m_vout << "Key counters needed " << (bytes_keys / (1024*1024)) << " MBytes\n";
+            m_vout << "Key counters needed " << (bytes_keys / (1024UL * 1024UL)) << " MBytes\n";
         }
 
         std::size_t bytes_tags = 0;
@@ -289,7 +289,7 @@ public:
             }
         }
 
-        m_vout << "Tag counters needed " << (bytes_tags / (1024*1024)) << " MBytes\n";
+        m_vout << "Tag counters needed " << (bytes_tags / (1024UL * 1024UL)) << " MBytes\n";
     }
 
 }; // class Handler

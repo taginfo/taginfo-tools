@@ -144,7 +144,7 @@ public:
     static void set_dimensions(unsigned int width, unsigned  int height) {
         c_width = width;
         c_height = height;
-        c_distribution_all.resize(c_width * c_height);
+        c_distribution_all.resize(static_cast<size_t>(c_width) * static_cast<size_t>(c_height));
     }
 
     /**
