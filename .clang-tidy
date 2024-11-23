@@ -1,10 +1,16 @@
 ---
-Checks: '*,-cppcoreguidelines-avoid-c-arrays,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-constant-array-index,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-vararg,-hicpp-avoid-c-arrays,-hicpp-vararg,-fuchsia-*,-google-runtime-references,-hicpp-no-array-decay,-llvm-header-guard,-llvmlibc-*,-modernize-avoid-c-arrays,-modernize-use-trailing-return-type,-readability-implicit-bool-conversion,-readability-magic-numbers'
+Checks: '*,-altera-*,-bugprone-easily-swappable-parameters,-cppcoreguidelines-avoid-c-arrays,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-cppcoreguidelines-pro-bounds-constant-array-index,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-vararg,-hicpp-avoid-c-arrays,-hicpp-vararg,-fuchsia-*,-google-runtime-references,-hicpp-no-array-decay,-llvm-header-guard,-llvmlibc-*,-modernize-avoid-c-arrays,-modernize-use-trailing-return-type,-readability-identifier-length,-readability-implicit-bool-conversion,-readability-magic-numbers'
 #
 #  For a list of check options, see:
 #  https://clang.llvm.org/extra/clang-tidy/checks/list.html
 #
 #  Disabled checks:
+#
+#  altera-*
+#    Doesn't apply.
+#
+#  bugprone-easily-swappable-parameters
+#    Interesting test, but not something we can do much about in many places.
 #
 #  cppcoreguidelines-avoid-magic-numbers
 #  readability-magic-numbers
@@ -37,6 +43,9 @@ Checks: '*,-cppcoreguidelines-avoid-c-arrays,-cppcoreguidelines-avoid-magic-numb
 #
 #  modernize-use-trailing-return-type
 #    We are not that modern
+#
+#  readability-identifier-length
+#    Too strict.
 #
 #  readability-implicit-bool-conversion
 #    I don't think this makes the code more readable.
