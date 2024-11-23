@@ -7,10 +7,10 @@ runs:
     - name: Install packages
       run: |
         sudo apt-get update -q
-        # workaround for https://github.com/actions/virtual-environments/issues/2139
+        # workaround for https://github.com/actions/virtual-environments/issues/2139 (Ubuntu 20.04)
         sudo apt-get remove nginx
         sudo apt-get remove libgd3
-        sudo apt-get install -yq libgd-dev libutfcpp-dev
+        sudo apt-get install -yq libgd-dev libsqlite3-dev
       shell: bash
     - name: Install from git
       run: |
