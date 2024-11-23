@@ -130,10 +130,10 @@ static void get_unicode_info(const char* text, Sqlite::Statement& insert) {
         UErrorCode errorCode = U_ZERO_ERROR;
         u_charName(codepoint, U_UNICODE_CHAR_NAME, buffer.begin(), buffer.size(), &errorCode);
 
-        UCharDirection direction = u_charDirection(codepoint);
+        const UCharDirection direction = u_charDirection(codepoint);
         const int32_t block = u_getIntPropertyValue(codepoint, UCHAR_BLOCK);
 
-        icu::UnicodeString ustr{codepoint};
+        const icu::UnicodeString ustr{codepoint};
         std::string str;
         ustr.toUTF8String(str);
 

@@ -260,7 +260,7 @@ void TagStatsHandler::print_and_clear_tag_distribution_images(osmium::item_type 
 }
 
 void TagStatsHandler::print_actual_memory_usage() {
-    osmium::MemoryUsage mcheck;
+    const osmium::MemoryUsage mcheck;
     m_vout << "\n"
            << "Actual memory usage:\n"
            << "  current: " << mcheck.current() << "MB\n"

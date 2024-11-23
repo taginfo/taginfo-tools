@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     }
 
     try {
-        osmium::io::File input_file{argv[1]};
+        const osmium::io::File input_file{argv[1]};
 
         Sqlite::Database db{argv[2], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
         db.exec("CREATE TABLE stats (key TEXT, value INT64);");

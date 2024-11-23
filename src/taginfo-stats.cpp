@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
     unsigned int height = 180;
 
     while (true) {
-        int c = getopt_long(argc, argv, "Hi:Im:s:t:r:b:l:w:h:", long_options, nullptr);
+        const int c = getopt_long(argc, argv, "Hi:Im:s:t:r:b:l:w:h:", long_options, nullptr);
         if (c == -1) {
             break;
         }
@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
         vout << "  " << get_libosmium_version() << '\n';
 
         GeoDistribution::set_dimensions(width, height);
-        osmium::io::File input_file{argv[optind]};
+        const osmium::io::File input_file{argv[optind]};
         Sqlite::Database db{argv[optind + 1], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
 
         MapToInt map_to_int{left, bottom, right, top, width, height};

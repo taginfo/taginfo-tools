@@ -105,7 +105,7 @@ static void find_similarities(const char* begin, const char* end, Sqlite::Statem
         std::size_t len2 = 0;
         for (const char* str2 = str1 + len1; str2 != end; str2 += len2 + 1) {
             len2 = std::strlen(str2);
-            int sim = similarity(str1, len1, str2, len2);
+            const int sim = similarity(str1, len1, str2, len2);
             if (sim >= 0) {
                 //std::cout << "[" << str1 << "][" << str2 << "]\n";
                 insert.bind_text(str1).bind_text(str2).bind_int(sim).execute();

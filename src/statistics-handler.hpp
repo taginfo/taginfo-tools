@@ -90,7 +90,7 @@ public:
 
         osmium::object_id_type ref = 0;
         for (const auto& wn : way.nodes()) {
-            osmium::object_id_type diff = wn.ref() - ref;
+            const osmium::object_id_type diff = wn.ref() - ref;
             if (diff == 1) {
                 ++m_stats.way_nodes_consecutive;
             } else if (diff <= 127) { // 2^7-1

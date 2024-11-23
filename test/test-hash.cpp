@@ -4,7 +4,7 @@
 #include "hash.hpp"
 
 TEST_CASE("Hash of C string") {
-    djb2_hash hash{};
+    const djb2_hash hash{};
 
     CHECK(hash("") == 0x1505U);
     CHECK(hash("highway") == 0xd0b345d8e056U);
@@ -15,7 +15,7 @@ TEST_CASE("Hash of C string") {
 }
 
 TEST_CASE("Hash of std::pair of C strings") {
-    djb2_hash hash{};
+    const djb2_hash hash{};
 
     CHECK(hash(std::make_pair("", "")) == 0x2b5e2U);
     CHECK(hash(std::make_pair("highway", "")) == 0x1ae71c00f4eb53);
@@ -24,7 +24,7 @@ TEST_CASE("Hash of std::pair of C strings") {
 }
 
 TEST_CASE("C string comparison") {
-    eqstr eq{};
+    const eqstr eq{};
 
     CHECK(eq(nullptr, nullptr));
 
@@ -36,8 +36,9 @@ TEST_CASE("C string comparison") {
     CHECK_FALSE(eq("foo", "bar"));
     CHECK_FALSE(eq("foo", ""));
 }
+
 TEST_CASE("comparison of std::pair of C strings") {
-    eqstr eq{};
+    const eqstr eq{};
 
     CHECK(eq(std::make_pair(nullptr, nullptr), std::make_pair(nullptr, nullptr)));
 

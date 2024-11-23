@@ -304,7 +304,7 @@ int main(int argc, char* argv[]) {
     std::string selection_database_name;
 
     while (true) {
-        int c = getopt_long(argc, argv, "Hs:", long_options, nullptr);
+        const int c = getopt_long(argc, argv, "Hs:", long_options, nullptr);
         if (c == -1) {
             break;
         }
@@ -332,7 +332,7 @@ int main(int argc, char* argv[]) {
         vout << "  " << get_taginfo_tools_version() << '\n';
         vout << "  " << get_libosmium_version() << '\n';
 
-        osmium::io::File input_file{argv[optind]};
+        const osmium::io::File input_file{argv[optind]};
         Sqlite::Database db{argv[optind + 1], SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE}; // NOLINT(hicpp-signed-bitwise)
         db.exec("PRAGMA journal_mode = OFF;");
         db.exec("PRAGMA synchronous  = OFF;");
@@ -351,7 +351,7 @@ int main(int argc, char* argv[]) {
         vout << "Writing database...\n";
         handler.write(db);
 
-        osmium::MemoryUsage mcheck;
+        const osmium::MemoryUsage mcheck;
         vout << "\n"
             << "Actual memory usage:\n"
             << "  current: " << mcheck.current() << "MB\n"
