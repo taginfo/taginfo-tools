@@ -51,7 +51,7 @@ static split_result split_key_value(const char* kv) noexcept {
     const char* v = std::strchr(kv, '=');
 
     if (v) {
-        return split_result{kv, size_t(v - kv), v + 1, std::strlen(v+1)};
+        return split_result{kv, static_cast<size_t>(v - kv), v + 1, std::strlen(v+1)};
     }
 
     return split_result{kv, std::strlen(kv), "", 0};

@@ -88,14 +88,14 @@ public:
         }
         if (m_location_index_16bit) {
             assert(value <= std::numeric_limits<uint16_t>::max());
-            m_location_index_16bit->set(id, uint16_t(value));
+            m_location_index_16bit->set(id, static_cast<uint16_t>(value));
         } else {
             m_location_index_32bit->set(id, value);
         }
     }
 
     uint32_t get(osmium::unsigned_object_id_type id) const {
-        return m_location_index_16bit ? uint32_t(m_location_index_16bit->get(id))
+        return m_location_index_16bit ? static_cast<uint32_t>(m_location_index_16bit->get(id))
                                       : m_location_index_32bit->get(id);
     }
 
