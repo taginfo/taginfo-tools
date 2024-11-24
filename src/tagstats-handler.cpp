@@ -222,7 +222,6 @@ void TagStatsHandler::print_and_clear_key_distribution_images(osmium::item_type 
         stat.distribution().clear();
     }
 
-    m_vout << "gridcells_all: " << GeoDistribution::count_all_set_cells() << "\n";
     m_vout << "sum of key location image sizes: " << std::setw(6) << (sum_size / 1024) << " kB\n";
 
     m_database.commit();

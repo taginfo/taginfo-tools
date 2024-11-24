@@ -125,9 +125,6 @@ class GeoDistribution {
     /// If there is only one grid cell location, this is where its kept.
     uint32_t m_location = 0;
 
-    /// Overall distribution
-    static geo_distribution_type c_distribution_all;
-
     static unsigned int c_width;
     static unsigned int c_height;
 
@@ -144,7 +141,6 @@ public:
     static void set_dimensions(unsigned int width, unsigned  int height) {
         c_width = width;
         c_height = height;
-        c_distribution_all.resize(static_cast<size_t>(c_width) * static_cast<size_t>(c_height));
     }
 
     /**
@@ -158,20 +154,16 @@ public:
         if (m_cells == 0) {
             m_location = n;
             ++m_cells;
-            c_distribution_all[n] = true;
         } else if (m_cells == 1 && m_location != n) {
             m_distribution = std::make_unique<geo_distribution_type>(c_width * c_height);
             m_distribution->operator[](m_location) = true;
-            c_distribution_all[m_location] = true;
             m_distribution->operator[](n) = true;
-            c_distribution_all[n] = true;
             ++m_cells;
         } else if (m_cells == 1 && m_location == n) {
             // nothing to do
         } else if (! m_distribution->operator[](n)) {
             ++m_cells;
             m_distribution->operator[](n) = true;
-            c_distribution_all[n] = true;
         }
     }
 
@@ -271,20 +263,6 @@ public:
      */
     unsigned int cells() const noexcept {
         return m_cells;
-    }
-
-    /**
-     * Return the number of cells that are set in at least one GeoDistribution
-     * object.
-     */
-    static unsigned int count_all_set_cells() {
-        unsigned int c = 0;
-        for (unsigned int n = 0; n < c_width * c_height; ++n) {
-            if (c_distribution_all[n]) {
-                ++c;
-            }
-        }
-        return c;
     }
 
 }; // class GeoDistribution

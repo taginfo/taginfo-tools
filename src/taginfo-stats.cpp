@@ -37,7 +37,6 @@
 
 #include <string>
 
-GeoDistribution::geo_distribution_type GeoDistribution::c_distribution_all;
 unsigned int GeoDistribution::c_width;
 unsigned int GeoDistribution::c_height;
 
