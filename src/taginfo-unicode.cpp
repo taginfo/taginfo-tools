@@ -138,7 +138,9 @@ static void get_unicode_info(const char* text, Sqlite::Statement& insert) {
         ustr.toUTF8String(str);
 
         std::array<char, 10> uplus{};
-        snprintf(uplus.begin(), uplus.size(), "U+%04x", codepoint);
+        if (snprintf(uplus.begin(), uplus.size(), "U+%04x", codepoint) != 6) {
+            throw std::runtime_error{"Unicode code point to hex conversion failed"};
+        }
 
         insert.
             bind_text(text).
