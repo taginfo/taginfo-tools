@@ -13,7 +13,7 @@ struct djb2_hash {
     static std::size_t calc(std::size_t hash, const char *str) noexcept {
         std::size_t c = 0;
 
-        while ((c = static_cast<std::size_t>(*str++))) {
+        while ((c = static_cast<std::size_t>(*str++))) { // NOLINT(bugprone-signed-char-misuse,cert-str34-c)
             hash = ((hash << 5U) + hash) + c; /* hash * 33 + c */
         }
 

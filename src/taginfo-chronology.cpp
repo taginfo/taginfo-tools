@@ -304,6 +304,7 @@ int main(int argc, char* argv[]) {
     std::string selection_database_name;
 
     while (true) {
+        // NOLINTNEXTLINE(concurrency-mt-unsafe)
         const int c = getopt_long(argc, argv, "Hs:", long_options, nullptr);
         if (c == -1) {
             break;

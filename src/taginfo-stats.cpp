@@ -122,6 +122,7 @@ int main(int argc, char* argv[]) {
     unsigned int height = 180;
 
     while (true) {
+        // NOLINTNEXTLINE(concurrency-mt-unsafe)
         const int c = getopt_long(argc, argv, "Hi:Im:s:t:r:b:l:w:h:", long_options, nullptr);
         if (c == -1) {
             break;
