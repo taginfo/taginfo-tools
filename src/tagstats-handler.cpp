@@ -278,14 +278,6 @@ KeyStats& TagStatsHandler::get_stat(const char* key) {
 }
 
 void TagStatsHandler::collect_tag_stats(const osmium::OSMObject& object) {
-    if (m_max_timestamp < object.timestamp()) {
-        m_max_timestamp = object.timestamp();
-    }
-
-    if (object.tags().empty()) {
-        return;
-    }
-
     for (const auto& tag : object.tags()) {
         KeyStats& stat = get_stat(tag.key());
         stat.update(tag.value(), object, m_string_store);
@@ -384,8 +376,16 @@ TagStatsHandler::TagStatsHandler(Sqlite::Database& database,
 }
 
 void TagStatsHandler::node(const osmium::Node& node) {
+    if (m_max_timestamp < node.timestamp()) {
+        m_max_timestamp = node.timestamp();
+    }
+
     m_statistics_handler.node(node);
-    collect_tag_stats(node);
+
+    if (!node.tags().empty()) {
+        collect_tag_stats(node);
+    }
+
     m_location_index.set(node.positive_id(), m_map_to_int(node.location()));
 }
 
@@ -395,8 +395,15 @@ void TagStatsHandler::way(const osmium::Way& way) {
         m_last_type = osmium::item_type::way;
     }
 
+    if (m_max_timestamp < way.timestamp()) {
+        m_max_timestamp = way.timestamp();
+    }
+
     m_statistics_handler.way(way);
-    collect_tag_stats(way);
+
+    if (!way.tags().empty()) {
+        collect_tag_stats(way);
+    }
 }
 
 void TagStatsHandler::relation(const osmium::Relation& relation) {
@@ -405,8 +412,15 @@ void TagStatsHandler::relation(const osmium::Relation& relation) {
         m_last_type = osmium::item_type::relation;
     }
 
+    if (m_max_timestamp < relation.timestamp()) {
+        m_max_timestamp = relation.timestamp();
+    }
+
     m_statistics_handler.relation(relation);
-    collect_tag_stats(relation);
+
+    if (!relation.tags().empty()) {
+        collect_tag_stats(relation);
+    }
 
     const char* type = relation.tags().get_value_by_key("type");
     if (type) {
