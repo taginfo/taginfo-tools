@@ -12,8 +12,6 @@ runs:
         run: |
           cmake -LA .. \
            -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
-           -DOSMIUM_INCLUDE_DIR=${GITHUB_WORKSPACE}/../libosmium/include \
-           -DPROTOZERO_INCLUDE_DIR=${GITHUB_WORKSPACE}/../protozero/include \
            -DERROR_ON_WARNINGS=ON
         shell: bash
         working-directory: build

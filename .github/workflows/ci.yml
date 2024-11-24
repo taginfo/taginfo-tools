@@ -3,17 +3,69 @@ name: CI
 on: [ push, pull_request ]
 
 jobs:
-  ubuntu20-clang-dev:
-    runs-on: ubuntu-20.04
-    env:
-      CC: clang
-      CXX: clang++
-      BUILD_TYPE: Dev
+  linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - "ubuntu:22.04"        # gcc 12.2.0, clang 15.0.7, cmake 3.24.2
+          - "ubuntu:24.04"        # gcc 14.2.0, clang 18.1.3, cmake 3.28.3
+          - "debian:bullseye"     # gcc 10.2.1, clang 11.0.1, cmake 3.18.4
+          - "debian:bookworm"     # gcc 12.2.0, clang 15.0.6, cmake 3.25.1
+          - "debian:testing"
+          - "debian:experimental"
+        build_type: [Dev]
+        c_compiler: [gcc]
+        cpp_compiler: [g++]
+        include:
+          - image: "debian:bookworm"
+            c_compiler: clang
+            cpp_compiler: clang++
+          - image: "debian:bookworm"
+            build_type: Release
+            c_compiler: clang
+            cpp_compiler: clang++
+          - image: "debian:bookworm"
+            c_compiler: clang
+            cpp_compiler: clang++
+            CXXFLAGS: -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer
+            LDFLAGS: -fsanitize=address,undefined
+          - image: "debian:testing"
+            c_compiler: clang
+            cpp_compiler: clang++
+    container:
+      image: ${{ matrix.image }}
+      env:
+        BUILD_TYPE: ${{ matrix.build_type }}
+        CC: ${{ matrix.c_compiler }}
+        CXX: ${{ matrix.cpp_compiler }}
+        CXXFLAGS: ${{ matrix.CXXFLAGS }}
+        LDFLAGS: ${{ matrix.LDFLAGS }}
     steps:
+      - name: Prepare container (apt)
+        shell: bash
+        run: |
+          apt-get update -qq
+          apt-get install -yq --no-install-suggests \
+            clang \
+            cmake \
+            g++ \
+            git \
+            libbz2-dev \
+            libexpat1-dev \
+            libgd-dev \
+            libicu-dev \
+            libosmium2-dev \
+            libprotozero-dev \
+            libsqlite3-dev \
+            make \
+            sqlite3 \
+            zlib1g-dev
       - uses: actions/checkout@v4
         with:
           submodules: true
-      - uses: ./.github/actions/ubuntu-prerequisites
       - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
       - uses: ./.github/actions/ctest
@@ -48,89 +100,12 @@ jobs:
       - uses: ./.github/actions/build
       - uses: ./.github/actions/ctest
 
-  ubuntu24-clang-san-dev:
-    runs-on: ubuntu-24.04
-    env:
-      CC: clang
-      CXX: clang++
-      BUILD_TYPE: Dev
-      CXXFLAGS: -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer
-      LDFLAGS: -fsanitize=address,undefined
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/cmake
-      - uses: ./.github/actions/build
-      - uses: ./.github/actions/ctest
-
-  ubuntu24-clang-release:
-    runs-on: ubuntu-24.04
-    env:
-      CC: clang
-      CXX: clang++
-      BUILD_TYPE: Release
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/cmake
-      - uses: ./.github/actions/build
-      - uses: ./.github/actions/ctest
-
-  ubuntu20-gcc-dev:
-    runs-on: ubuntu-20.04
-    env:
-      CC: gcc-9
-      CXX: g++-9
-      BUILD_TYPE: Dev
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/cmake
-      - uses: ./.github/actions/build
-      - uses: ./.github/actions/ctest
-
-  ubuntu22-gcc-dev:
-    runs-on: ubuntu-22.04
-    env:
-      CC: gcc-9
-      CXX: g++-9
-      BUILD_TYPE: Dev
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/cmake
-      - uses: ./.github/actions/build
-      - uses: ./.github/actions/ctest
-
   ubuntu24-gcc-dev:
     runs-on: ubuntu-24.04
     env:
       CC: gcc
       CXX: g++
       BUILD_TYPE: Dev
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: ./.github/actions/ubuntu-prerequisites
-      - uses: ./.github/actions/cmake
-      - uses: ./.github/actions/build
-      - uses: ./.github/actions/ctest
-
-  ubuntu24-gcc-release:
-    runs-on: ubuntu-24.04
-    env:
-      CC: gcc
-      CXX: g++
-      BUILD_TYPE: Release
     steps:
       - uses: actions/checkout@v4
         with:
