@@ -76,12 +76,6 @@ To run the tests, call `ctest`.
 * `taginfo-stats` - Create statistics from a planet or other OSM file
 * `taginfo-unicode` - Categorizes OSM tags based on unicode character types
 
-## Contact
-
-There is a mailing list for developers and people running their own instances
-of taginfo:
-[taginfo-dev](https://lists.openstreetmap.org/listinfo/taginfo-dev)
-
 ## Author
 
 Jochen Topf (jochen@topf.org) - https://jochentopf.com/
