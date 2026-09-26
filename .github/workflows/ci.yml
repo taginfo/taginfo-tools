@@ -12,6 +12,7 @@ jobs:
         image:
           - "ubuntu:22.04"        # gcc 12.2.0, clang 15.0.7, cmake 3.24.2
           - "ubuntu:24.04"        # gcc 14.2.0, clang 18.1.3, cmake 3.28.3
+          - "ubuntu:26.04"
           - "debian:bookworm"     # gcc 12.2.0, clang 15.0.6, cmake 3.25.1
           - "debian:trixie"
           - "debian:testing"
@@ -63,24 +64,9 @@ jobs:
             make \
             sqlite3 \
             zlib1g-dev
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
-      - uses: ./.github/actions/cmake
-      - uses: ./.github/actions/build
-      - uses: ./.github/actions/ctest
-
-  ubuntu22-clang-dev:
-    runs-on: ubuntu-22.04
-    env:
-      CC: clang
-      CXX: clang++
-      BUILD_TYPE: Dev
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: ./.github/actions/ubuntu-prerequisites
       - uses: ./.github/actions/cmake
       - uses: ./.github/actions/build
       - uses: ./.github/actions/ctest
@@ -92,7 +78,7 @@ jobs:
       CXX: clang++
       BUILD_TYPE: Dev
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
@@ -100,14 +86,29 @@ jobs:
       - uses: ./.github/actions/build
       - uses: ./.github/actions/ctest
 
-  ubuntu24-gcc-dev:
-    runs-on: ubuntu-24.04
+  ubuntu26-clang-dev:
+    runs-on: ubuntu-26.04
+    env:
+      CC: clang
+      CXX: clang++
+      BUILD_TYPE: Dev
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: ./.github/actions/ubuntu-prerequisites
+      - uses: ./.github/actions/cmake
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/ctest
+
+  ubuntu26-gcc-dev:
+    runs-on: ubuntu-26.04
     env:
       CC: gcc
       CXX: g++
       BUILD_TYPE: Dev
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
       - uses: ./.github/actions/ubuntu-prerequisites
